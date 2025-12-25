@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Personal GPA Calculator</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap"
+      rel="stylesheet" />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <div class="container">
+      <header>
+        <h1>GPA Calculator</h1>
+        <p class="subtitle">
+          Track your academic progress easily and visually.
+        </p>
+        <button id="themeToggleBtn" class="theme-btn">🌙</button>
+      </header>
+      <section class="input-section">
+        <div class="courses-entry">
+          <label>Courses & Grades</label>
+          <table id="coursesInputTable" class="input-table">
+            <thead>
+              <tr>
+                <th>Course Name</th>
+                <th>Grade</th>
+                <th>Credit Hours</th>
+                <th></th>
+              </tr>
+            </thead>
+            <tbody>
+              <!-- JS will add rows here -->
+            </tbody>
+          </table>
+          <button
+            type="button"
+            id="addCourseRowBtn"
+            class="icon-btn"
+            title="Add Course">
+            <span>+</span> Add Course
+          </button>
+        </div>
+        <button type="button" id="submitCoursesBtn" class="primary-btn">
+          Calculate GPA
+        </button>
+        <button
+          type="button"
+          id="stdGpaBtn"
+          class="icon-btn"
+          style="margin-left: 10px">
+          Standard GPA Calculator
+        </button>
+      </section>
+      <section class="results-section">
+        <div class="summary-cards">
+          <div class="card">
+            <div class="card-title">GPA</div>
+            <div id="gpaDisplay" class="card-value">-</div>
+          </div>
+          <div class="card">
+            <div class="card-title">Cumulative GPA</div>
+            <div id="cumulativeGpaDisplay" class="card-value">-</div>
+          </div>
+          <div class="card">
+            <div class="card-title">Total Credits</div>
+            <div id="totalCreditHours" class="card-value">-</div>
+          </div>
+        </div>
+        <div class="table-chart-wrapper">
+          <div class="table-wrapper">
+            <h2>Courses Overview</h2>
+            <table id="coursesTable">
+              <thead>
+                <tr>
+                  <th>Course</th>
+                  <th>Grade</th>
+                  <th>Grade Point</th>
+                  <th>Credit</th>
+                  <th>Action</th>
+                </tr>
+              </thead>
+              <tbody>
+                <!-- Populated by JS -->
+              </tbody>
+            </table>
+          </div>
+          <div class="chart-wrapper">
+            <h2>Progress</h2>
+            <canvas id="progressChart"></canvas>
+          </div>
+        </div>
+      </section>
+      <footer>
+        <p>
+          &copy; <span id="year"></span> Personal GPA Calculator. Designed by
+          Nahom-Biruk .
+        </p>
+      </footer>
+    </div>
+
+    <div id="toastContainer"></div>
+
+    <!-- Standard GPA Calculator Modal -->
+    <div id="stdGpaModal" class="modal">
+      <div class="modal-content">
+        <span id="stdGpaClose" class="close-btn">&times;</span>
+        <h2>Standard GPA Calculator</h2>
+        <table class="input-table">
+          <thead>
+            <tr>
+              <th>Course Name</th>
+              <th>Grade</th>
+              <th>Credit Hours</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody id="stdGpaTableBody">
+            <!-- JS will add rows here -->
+          </tbody>
+        </table>
+        <button type="button" id="stdGpaAddRowBtn" class="icon-btn">
+          <span>+</span> Add Course
+        </button>
+        <button type="button" id="stdGpaCalcBtn" class="primary-btn">
+          Calculate
+        </button>
+        <p id="stdGpaResult" class="modal-result"></p>
+      </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="main.js"></script>
+    <script>
+      document.getElementById("year").textContent = new Date().getFullYear();
+    </script>
+  </body>
+</html>
