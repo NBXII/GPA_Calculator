@@ -76,6 +76,20 @@ h1 {
     border: 1px solid var(--border-color);
 }
 
+/* Layout for action buttons: center the button group but keep the courses-entry left-aligned */
+.input-section {
+    text-align: center;
+}
+.courses-entry {
+    text-align: left;
+    margin-bottom: 12px;
+}
+.input-section > button, .input-section .icon-btn, .input-section .primary-btn {
+    display: inline-block;
+    margin: 8px 8px 0 0;
+    vertical-align: middle;
+}
+
 .academic-year-group {
     margin-bottom: 20px;
 }
@@ -328,7 +342,14 @@ footer a:hover {
     .summary-cards {
         grid-template-columns: 1fr;
     }
-    .input-table, #coursesTable {
+    /* Keep input tables readable and wrapped; only overview table scrolls */
+    .input-table {
+        display: table;
+        width: 100%;
+        overflow-x: visible;
+        white-space: normal;
+    }
+    #coursesTable {
         display: block;
         overflow-x: auto;
         white-space: nowrap;
@@ -476,4 +497,100 @@ footer a:hover {
 @keyframes fadeOut {
     from { opacity: 1; }
     to { opacity: 0; transform: translateY(20px); }
+}
+
+/* Mobile optimizations */
+@media (max-width: 480px) {
+    .container {
+        margin: 12px;
+        padding: 18px;
+        border-radius: 12px;
+    }
+
+    header { margin-bottom: 20px; }
+
+    h1 { font-size: 1.6rem; }
+
+    .theme-btn {
+        top: 16px;
+        right: 16px;
+        width: 36px;
+        height: 36px;
+    }
+
+    .input-section { padding: 16px; }
+
+    .icon-btn, .primary-btn {
+        width: 100%;
+        display: block;
+        box-sizing: border-box;
+        padding: 12px 14px;
+        font-size: 1rem;
+        margin-left: 0;
+    }
+
+    .input-table th, .input-table td, #coursesTable th, #coursesTable td {
+        padding: 8px;
+    }
+
+    .input-table input[type="text"], .input-table input[type="number"], .input-table select {
+        width: 100%;
+        padding: 8px;
+        font-size: 0.95rem;
+    }
+
+    .summary-cards { grid-template-columns: 1fr; gap: 12px; }
+
+    .table-chart-wrapper { grid-template-columns: 1fr; gap: 18px; }
+
+    .chart-wrapper, .table-wrapper { padding: 16px; }
+
+    /* Make only the courses overview table horizontally scrollable */
+    #coursesTable {
+        display: block;
+        width: 100%;
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+    }
+
+    /* Ensure table-wrapper and chart stack cleanly and the overview table doesn't create empty space */
+    .table-chart-wrapper {
+        grid-template-columns: 1fr;
+        gap: 18px;
+        grid-auto-rows: auto;
+    }
+    .table-wrapper, .chart-wrapper {
+        width: 100%;
+        box-sizing: border-box;
+        margin: 0;
+        padding: 12px 16px;
+    }
+    /* Use fixed layout so the table respects container width and wraps cells cleanly */
+    #coursesTable {
+        table-layout: fixed;
+    }
+    #coursesTable th, #coursesTable td {
+        white-space: normal;
+        overflow-wrap: break-word;
+        word-break: break-word;
+    }
+
+    /* Ensure canvas scales nicely */
+    .chart-wrapper canvas { width: 100% !important; height: auto !important; }
+
+    /* Modal adjustments */
+    .modal-content { margin: 6% auto; padding: 18px; width: 96%; max-width: 520px; }
+
+    /* Increase touch targets for remove buttons */
+    .removeRowBtn, .stdRemoveRowBtn { width: 44px; height: 44px; }
+
+    /* Toast fits screen */
+    #toastContainer { left: 10px; right: 10px; bottom: 14px; }
+    .toast { width: auto; max-width: calc(100% - 28px); }
+}
+
+@media (max-width: 360px) {
+    h1 { font-size: 1.4rem; }
+    .card-value { font-size: 2rem; }
+    .primary-btn { padding: 10px 12px; }
 }
