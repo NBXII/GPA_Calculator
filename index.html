@@ -54,6 +54,13 @@
           style="margin-left: 10px">
           Standard GPA Calculator
         </button>
+        <button
+          type="button"
+          id="semCgpaBtn"
+          class="icon-btn"
+          style="margin-left: 10px">
+          Semester CGPA Calculator
+        </button>
       </section>
       <section class="results-section">
         <div class="summary-cards">
@@ -129,6 +136,39 @@
           Calculate
         </button>
         <p id="stdGpaResult" class="modal-result"></p>
+      </div>
+    </div>
+
+    <!-- Semester CGPA Calculator Modal -->
+    <div id="semCgpaModal" class="modal">
+      <div class="modal-content">
+        <span id="semCgpaClose" class="close-btn">&times;</span>
+        <h2>Semester CGPA Calculator</h2>
+        <div style="display:flex;gap:8px;align-items:center;margin-bottom:12px;">
+          <label style="margin:0;font-weight:600;color:var(--text-muted-color);">Semesters:</label>
+          <input id="semCountInput" type="number" min="1" value="1" style="width:80px;padding:8px;border-radius:6px;border:1px solid var(--border-color);background:var(--bg-secondary-color);color:var(--text-color);" />
+          <button id="semGenerateBtn" class="icon-btn">Generate</button>
+        </div>
+        <table class="input-table">
+          <thead>
+            <tr>
+              <th>Semester</th>
+              <th>GPA</th>
+              <th>Credits (optional)</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody id="semCgpaTableBody">
+            <!-- JS will add rows here -->
+          </tbody>
+        </table>
+        <button type="button" id="semCgpaAddRowBtn" class="icon-btn">
+          <span>+</span> Add Semester
+        </button>
+        <button type="button" id="semCgpaCalcBtn" class="primary-btn">
+          Calculate CGPA
+        </button>
+        <p id="semCgpaResult" class="modal-result"></p>
       </div>
     </div>
 
