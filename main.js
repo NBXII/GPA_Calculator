@@ -18,8 +18,8 @@ document.addEventListener('DOMContentLoaded', function () {
     const gradePointMap = {
         'A+': 4.0, 'A': 4.0, 'A-': 3.67,
         'B+': 3.33, 'B': 3.0, 'B-': 2.67,
-        'C+': 2.33, 'C': 2.0, 'C-': 1.67,
-        'D+': 1.33, 'D': 1.0, 'F': 0.0
+        'C+': 2.0, 'C': 1.5, 'C-': 1.0,
+        'D+': 1.0, 'D': 1.0, 'F': 0.0
     };
 
     // --- Theme Management ---
@@ -195,14 +195,17 @@ document.addEventListener('DOMContentLoaded', function () {
     });
 
     function deleteCourse(index) {
+        // Store deleted item for possible undo
         recentlyDeleted = { course: allCourses[index], index: index };
+        // Remove and persist immediately so refresh reflects deletion
         allCourses.splice(index, 1);
+        saveCourses();
         updateDashboard();
         showToast('Course deleted.', true);
 
+        // Allow undo for a short window; if not undone, clear the cache
         undoTimeout = setTimeout(() => {
             recentlyDeleted = null;
-            saveCourses(); // Permanently save after undo timeout
         }, 5000);
     }
 
@@ -210,9 +213,10 @@ document.addEventListener('DOMContentLoaded', function () {
         if (recentlyDeleted) {
             clearTimeout(undoTimeout);
             allCourses.splice(recentlyDeleted.index, 0, recentlyDeleted.course);
+            // Re-save restored state so undo persists
+            saveCourses();
             recentlyDeleted = null;
             updateDashboard();
-            // No need to save here, as nothing has changed from the state before deletion
         }
     }
 
@@ -353,6 +357,86 @@ document.addEventListener('DOMContentLoaded', function () {
     });
 
     // --- End Standard GPA Calculator Modal ---
+
+    // --- Semester CGPA Calculator Modal ---
+    const semCgpaBtn = document.getElementById('semCgpaBtn');
+    const semCgpaModal = document.getElementById('semCgpaModal');
+    const semCgpaClose = document.getElementById('semCgpaClose');
+    const semCgpaTableBody = document.getElementById('semCgpaTableBody');
+    const semCgpaAddRowBtn = document.getElementById('semCgpaAddRowBtn');
+    const semCgpaCalcBtn = document.getElementById('semCgpaCalcBtn');
+    const semCgpaResult = document.getElementById('semCgpaResult');
+    const semCountInput = document.getElementById('semCountInput');
+    const semGenerateBtn = document.getElementById('semGenerateBtn');
+
+    function openSemCgpaModal() {
+        semCgpaModal.style.display = 'block';
+        semCgpaTableBody.innerHTML = '';
+        addSemRow();
+        semCgpaResult.textContent = '';
+    }
+    function closeSemCgpaModal() {
+        semCgpaModal.style.display = 'none';
+    }
+    semCgpaBtn.addEventListener('click', openSemCgpaModal);
+    semCgpaClose.addEventListener('click', closeSemCgpaModal);
+    window.addEventListener('click', function (e) {
+        if (e.target === semCgpaModal) closeSemCgpaModal();
+    });
+
+    function addSemRow(label) {
+        const row = semCgpaTableBody.insertRow();
+        const semLabel = label || `Semester ${semCgpaTableBody.rows.length + 1}`;
+        row.innerHTML = `
+            <td><input type="text" class="semLabel" value="${semLabel}" /></td>
+            <td><input type="number" class="semGpa" placeholder="GPA" min="0" max="4" step="0.01" /></td>
+            <td><input type="number" class="semCredits" placeholder="Credits (optional)" min="0" step="0.5" /></td>
+            <td><button type="button" class="stdRemoveRowBtn" title="Remove">&#10006;</button></td>
+        `;
+        row.querySelector('.stdRemoveRowBtn').onclick = function () { row.remove(); };
+    }
+    semCgpaAddRowBtn.addEventListener('click', addSemRow);
+
+    semGenerateBtn.addEventListener('click', function () {
+        const count = parseInt(semCountInput.value, 10) || 0;
+        if (count <= 0) return;
+        semCgpaTableBody.innerHTML = '';
+        for (let i = 1; i <= count; i++) addSemRow(`Semester ${i}`);
+    });
+
+    semCgpaCalcBtn.addEventListener('click', function () {
+        const gpaEls = Array.from(semCgpaTableBody.getElementsByClassName('semGpa'));
+        const creditEls = Array.from(semCgpaTableBody.getElementsByClassName('semCredits'));
+        if (gpaEls.length === 0) {
+            semCgpaResult.textContent = 'Add at least one semester.';
+            return;
+        }
+        let totalWeighted = 0, totalCredits = 0, simpleSum = 0, count = 0;
+        for (let i = 0; i < gpaEls.length; i++) {
+            const gpaVal = parseFloat(gpaEls[i].value);
+            const crVal = parseFloat(creditEls[i].value);
+            if (isNaN(gpaVal) || gpaVal < 0) {
+                semCgpaResult.textContent = 'Please enter valid GPA values for all semesters.';
+                return;
+            }
+            count++;
+            simpleSum += gpaVal;
+            if (!isNaN(crVal) && crVal > 0) {
+                totalWeighted += gpaVal * crVal;
+                totalCredits += crVal;
+            }
+        }
+        let result;
+        if (totalCredits > 0) {
+            result = (totalWeighted / totalCredits).toFixed(3);
+            semCgpaResult.textContent = `Weighted CGPA: ${result} (by credits)`;
+        } else {
+            result = (simpleSum / count).toFixed(3);
+            semCgpaResult.textContent = `Unweighted CGPA: ${result} (simple average)`;
+        }
+    });
+
+    // End Semester CGPA Calculator Modal
 
     // Initial setup
     addCourseRow();
