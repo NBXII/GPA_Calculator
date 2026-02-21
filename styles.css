@@ -258,6 +258,25 @@ h1 {
     font-weight: 700;
     color: var(--primary-color);
 }
+.gpa-level {
+    margin-top: 6px;
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: var(--text-muted-color);
+}
+.distinction-badge {
+    display:inline-block;
+    padding:6px 10px;
+    border-radius:999px;
+    font-size:0.85rem;
+    font-weight:700;
+    color:#fff;
+}
+.dist-first { background: #28a745; }
+.dist-upper { background: #17a2b8; }
+.dist-lower { background: #ffc107; color:#111; }
+.dist-third { background: #fd7e14; }
+.dist-fail { background: var(--danger-color); }
 
 .table-chart-wrapper {
     display: grid;
@@ -308,6 +327,40 @@ h2 {
 .chart-wrapper {
     padding: 24px;
 }
+
+.guide-section {
+    margin-top: 18px;
+    background: linear-gradient(180deg, rgba(0,123,255,0.03), transparent 40%);
+    padding: 18px;
+    border-radius: 12px;
+    border: 1px solid var(--border-color-light);
+    display: grid;
+    grid-template-columns: 1fr minmax(220px, 320px);
+    gap: 18px;
+    align-items: start;
+}
+.grade-legend table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 12px;
+}
+.legend-card { background: var(--bg-secondary-color); padding:12px; border-radius:10px; border:1px solid var(--border-color-light); box-shadow: 0 4px 12px rgba(0,0,0,0.03); }
+.progress-placeholder { display:flex; align-items:center; justify-content:center; height:220px; border-radius:12px; background: linear-gradient(180deg, rgba(0,0,0,0.03), transparent); color:var(--text-muted-color); font-weight:600; }
+.grade-legend th, .grade-legend td {
+    border: 1px solid var(--border-color-light);
+    padding: 8px 10px;
+    text-align: left;
+}
+.guide-list h3 { margin-top: 8px; margin-bottom: 6px; color: var(--text-muted-color); font-weight:600;}
+.guide-list ol { margin: 0 0 8px 18px; color: var(--text-color); }
+
+/* Distinction explanations under the guide */
+.distinction-explanations { margin-top: 12px; }
+.distinction-explanations h4 { margin: 6px 0; color: var(--text-color); font-size: 1rem; }
+.distinction-explanations ul { margin: 8px 0 0 18px; color: var(--text-color); }
+.distinction-explanations li { margin-bottom: 8px; line-height: 1.35; }
+.distinction-explanations strong { display: inline-block; width: 170px; font-weight:700; }
+
 
 footer {
     text-align: center;
