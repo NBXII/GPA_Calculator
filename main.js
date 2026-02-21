@@ -132,6 +132,16 @@ document.addEventListener('DOMContentLoaded', function () {
         updateDashboard();
     }
 
+    // Distinction / classification helper (4.0 scale)
+    function getDistinctionLabel(gpa) {
+        if (!Number.isFinite(gpa)) return { text: '', cls: '' };
+        // Highest label now starts at the previous 3.3 threshold
+        if (gpa >= 3.5) return { text: 'Great Distinction', cls: 'dist-first' };
+        if (gpa >= 3.0) return { text: 'Distinction', cls: 'dist-upper' };
+        if (gpa >= 2.0) return { text: 'Academic Warning', cls: 'dist-lower' };
+        return { text: 'Academic Dismissal', cls: 'dist-fail' };
+    }
+
     function animateValue(element, start, end, duration) {
         let startTimestamp = null;
         const step = (timestamp) => {
@@ -169,6 +179,18 @@ document.addEventListener('DOMContentLoaded', function () {
         animateValue(gpaDisplay, currentGpa, gpa, 500);
         animateValue(cumulativeGpaDisplay, currentGpa, gpa, 500);
         animateValue(totalCreditHoursDisplay, currentCredits, totalCredits, 500);
+
+        // Update classification badges/texts (non-animated)
+        const gpaLevelEl = document.getElementById('gpaLevel');
+        const cumulativeLevelEl = document.getElementById('cumulativeLevel');
+        if (gpaLevelEl) {
+            const label = getDistinctionLabel(gpa);
+            gpaLevelEl.innerHTML = label.text ? `<span class="distinction-badge ${label.cls}">${label.text}</span>` : '';
+        }
+        if (cumulativeLevelEl) {
+            const label2 = getDistinctionLabel(gpa);
+            cumulativeLevelEl.innerHTML = label2.text ? `<span class="distinction-badge ${label2.cls}">${label2.text}</span>` : '';
+        }
     }
 
     function populateTable(courses) {
@@ -244,16 +266,32 @@ document.addEventListener('DOMContentLoaded', function () {
 
     function renderChart(courses) {
         const ctx = document.getElementById('progressChart').getContext('2d');
+        const canvas = document.getElementById('progressChart');
+        const placeholder = document.getElementById('progressPlaceholder');
+        if (!courses || courses.length === 0) {
+            // No data: destroy existing chart, show placeholder
+            if (window.progressChart) {
+                try { window.progressChart.destroy(); } catch(e){}
+                window.progressChart = null;
+            }
+            canvas.style.display = 'none';
+            placeholder.style.display = 'flex';
+            return;
+        }
+        // Has data
+        placeholder.style.display = 'none';
+        canvas.style.display = '';
+        const ctx2 = canvas.getContext('2d');
         if (window.progressChart) window.progressChart.destroy();
-        window.progressChart = new Chart(ctx, {
+        window.progressChart = new Chart(ctx2, {
             type: 'line',
             data: {
                 labels: courses.map(c => c.name),
                 datasets: [{
                     label: 'Grade Point',
                     data: courses.map(c => c.gradePoint),
-                    borderColor: 'var(--primary-color)',
-                    backgroundColor: 'rgba(0, 123, 255, 0.1)',
+                    borderColor: getComputedStyle(document.documentElement).getPropertyValue('--primary-color') || '#0056b3',
+                    backgroundColor: 'rgba(0, 123, 255, 0.12)',
                     fill: true,
                     tension: 0.4
                 }]
@@ -429,10 +467,14 @@ document.addEventListener('DOMContentLoaded', function () {
         let result;
         if (totalCredits > 0) {
             result = (totalWeighted / totalCredits).toFixed(3);
-            semCgpaResult.textContent = `Weighted CGPA: ${result} (by credits)`;
+            const num = parseFloat(result);
+            const label = getDistinctionLabel(num);
+            semCgpaResult.innerHTML = `Weighted CGPA: ${result} (by credits) <span class="distinction-badge ${label.cls}" style="margin-left:8px">${label.text}</span>`;
         } else {
             result = (simpleSum / count).toFixed(3);
-            semCgpaResult.textContent = `Unweighted CGPA: ${result} (simple average)`;
+            const num = parseFloat(result);
+            const label = getDistinctionLabel(num);
+            semCgpaResult.innerHTML = `Unweighted CGPA: ${result} (simple average) <span class="distinction-badge ${label.cls}" style="margin-left:8px">${label.text}</span>`;
         }
     });
 
