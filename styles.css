@@ -640,6 +640,18 @@ footer a:hover {
     /* Toast fits screen */
     #toastContainer { left: 10px; right: 10px; bottom: 14px; }
     .toast { width: auto; max-width: calc(100% - 28px); }
+
+    /* Make the guide section stack on small screens and compact the legend */
+    .guide-section {
+        grid-template-columns: 1fr;
+        padding: 12px;
+        gap: 12px;
+    }
+    .legend-card { padding: 8px; }
+    .grade-legend table { width: 100%; font-size: 0.92rem; }
+    .grade-legend th, .grade-legend td { padding: 6px 8px; }
+    .distinction-explanations strong { display:block; width:auto; margin-bottom:6px; }
+    .progress-placeholder { height:140px; }
 }
 
 @media (max-width: 360px) {
