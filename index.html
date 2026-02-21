@@ -20,6 +20,51 @@
         </p>
         <button id="themeToggleBtn" class="theme-btn">🌙</button>
       </header>
+      <section class="guide-section" aria-labelledby="guideHeading">
+        <div class="guide-list">
+          <h2 id="guideHeading">Grade Point Reference & How GPA Is Calculated</h2>
+          <h3>Step-by-step</h3>
+          <ol>
+            <li>Enter each course name in the table under "Courses &amp; Grades".</li>
+            <li>Select the letter grade and enter the course credit hours (must be &gt; 0).</li>
+            <li>Click <strong>Calculate GPA</strong> to add those courses and compute the GPA.</li>
+            <li>Formula used: <em>GPA = (Σ grade_point × credit_hours) / (Σ credit_hours)</em>. Example: an A (4.0, 3 credits) and a B (3.0, 4 credits) → (4×3 + 3×4)/7 = 3.43.</li>
+            <li>Saved courses update the Courses Overview and the cumulative displays.</li>
+            <li>Use the <strong>Semester CGPA Calculator</strong> modal to compute weighted or simple averages across semesters.</li>
+          </ol>
+          <div class="distinction-explanations">
+            <h4>Distinction Levels</h4>
+            <ul>
+              <li><strong>Great Distinction (GPA ≥ 3.5):</strong> Awarded for outstanding academic performance across your courses — indicates consistent excellence.</li>
+              <li><strong>Distinction (GPA ≥ 3.0):</strong> Strong academic performance above departmental expectations.</li>
+              <li><strong>Academic Warning (GPA ≥ 2.0):</strong> Performance is below expectations; consider academic support and consult your advisor.</li>
+              <li><strong>Academic Dismissal (GPA &lt; 2.0):</strong> Performance is unsatisfactory and may lead to dismissal; immediate action is recommended.</li>
+            </ul>
+          </div>
+        </div>
+        <div class="grade-legend" aria-hidden="false">
+          <div class="legend-card">
+            <h4 style="margin-top:0;">Grade Legend</h4>
+            <table>
+              <thead><tr><th>Letter</th><th>Point</th></tr></thead>
+              <tbody>
+                <tr><td>A+, A</td><td>4.00</td></tr>
+                <tr><td>A-</td><td>3.67</td></tr>
+                <tr><td>B+</td><td>3.33</td></tr>
+                <tr><td>B</td><td>3.00</td></tr>
+                <tr><td>B-</td><td>2.67</td></tr>
+                <tr><td>C+</td><td>2.00</td></tr>
+                <tr><td>C</td><td>1.50</td></tr>
+                <tr><td>C-</td><td>1.00</td></tr>
+                <tr><td>D+, D</td><td>1.00</td></tr>
+                <tr><td>F</td><td>0.00</td></tr>
+              </tbody>
+            </table>
+            <p style="font-size:0.9rem;margin-top:8px;color:var(--text-muted-color);">Use these grade-point mappings when adding courses. The calculator uses the grade points multiplied by credits to compute GPA.</p>
+          </div>
+        </div>
+      </section>
+
       <section class="input-section">
         <div class="courses-entry">
           <label>Courses & Grades</label>
@@ -62,15 +107,18 @@
           Semester CGPA Calculator
         </button>
       </section>
+      
       <section class="results-section">
         <div class="summary-cards">
           <div class="card">
             <div class="card-title">GPA</div>
             <div id="gpaDisplay" class="card-value">-</div>
+            <div id="gpaLevel" class="gpa-level" aria-live="polite"></div>
           </div>
           <div class="card">
             <div class="card-title">Cumulative GPA</div>
             <div id="cumulativeGpaDisplay" class="card-value">-</div>
+            <div id="cumulativeLevel" class="gpa-level" aria-live="polite"></div>
           </div>
           <div class="card">
             <div class="card-title">Total Credits</div>
@@ -97,7 +145,8 @@
           </div>
           <div class="chart-wrapper">
             <h2>Progress</h2>
-            <canvas id="progressChart"></canvas>
+            <div id="progressPlaceholder" class="progress-placeholder">Add courses to see your progress chart</div>
+            <canvas id="progressChart" style="display:none"></canvas>
           </div>
         </div>
       </section>
