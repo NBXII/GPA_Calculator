@@ -14,13 +14,14 @@ document.addEventListener('DOMContentLoaded', function () {
     let undoTimeout;
     let recentlyDeleted = null;
 
-    // Grade letter to point mapping (standard 4.0 scale)
-    const gradePointMap = {
+    // Grade letter to point mapping
+    const defaultGradePointMap = {
         'A+': 4.0, 'A': 4.0, 'A-': 3.67,
         'B+': 3.33, 'B': 3.0, 'B-': 2.67,
         'C+': 2.0, 'C': 1.5, 'C-': 1.0,
         'D+': 1.0, 'D': 1.0, 'F': 0.0
     };
+    let gradePointMap = { ...defaultGradePointMap };
 
     // --- Theme Management ---
     function applyTheme(theme) {
@@ -40,6 +41,18 @@ document.addEventListener('DOMContentLoaded', function () {
         localStorage.setItem('allCourses', JSON.stringify(allCourses));
     }
 
+    function saveGradeMap() {
+        localStorage.setItem('gradePointMap', JSON.stringify(gradePointMap));
+    }
+
+    function getGradeOptionsHTML(selectedGrade = '') {
+        let options = '';
+        for (const grade in gradePointMap) {
+            options += `<option value="${grade}" ${grade === selectedGrade ? 'selected' : ''}>${grade}</option>`;
+        }
+        return options;
+    }
+
     // Dynamic course input rows
     function addCourseRow() {
         const row = coursesInputTable.insertRow();
@@ -48,18 +61,7 @@ document.addEventListener('DOMContentLoaded', function () {
             <td>
                 <select class="courseGrade">
                     <option value="">Grade</option>
-                    <option value="A+">A+</option>
-                    <option value="A">A</option>
-                    <option value="A-">A-</option>
-                    <option value="B+">B+</option>
-                    <option value="B">B</option>
-                    <option value="B-">B-</option>
-                    <option value="C+">C+</option>
-                    <option value="C">C</option>
-                    <option value="C-">C-</option>
-                    <option value="D+">D+</option>
-                    <option value="D">D</option>
-                    <option value="F">F</option>
+                    ${getGradeOptionsHTML()}
                 </select>
             </td>
             <td><input type="number" class="courseCredit" placeholder="Credit Hours" min="0" step="0.5" /></td>
@@ -245,14 +247,9 @@ document.addEventListener('DOMContentLoaded', function () {
         const course = allCourses[index];
         row.classList.add('is-editing');
 
-        let gradeOptions = '';
-        Object.keys(gradePointMap).forEach(grade => {
-            gradeOptions += `<option value="${grade}" ${grade === course.grade ? 'selected' : ''}>${grade}</option>`;
-        });
-
         row.innerHTML = `
             <td><input type="text" class="courseName" value="${course.name}" /></td>
-            <td><select class="courseGrade">${gradeOptions}</select></td>
+            <td><select class="courseGrade">${getGradeOptionsHTML(course.grade)}</select></td>
             <td>-</td>
             <td><input type="number" class="courseCredit" value="${course.credit}" min="0" step="0.5" /></td>
             <td>
@@ -415,21 +412,7 @@ document.addEventListener('DOMContentLoaded', function () {
         row.innerHTML = `
             <td><input type="text" class="stdCourseName" placeholder="Course Name" /></td>
             <td>
-                <select class="stdCourseGrade">
-                    <option value="">Grade</option>
-                    <option value="A+">A+</option>
-                    <option value="A">A</option>
-                    <option value="A-">A-</option>
-                    <option value="B+">B+</option>
-                    <option value="B">B</option>
-                    <option value="B-">B-</option>
-                    <option value="C+">C+</option>
-                    <option value="C">C</option>
-                    <option value="C-">C-</option>
-                    <option value="D+">D+</option>
-                    <option value="D">D</option>
-                    <option value="F">F</option>
-                </select>
+                <select class="stdCourseGrade"><option value="">Grade</option>${getGradeOptionsHTML()}</select>
             </td>
             <td><input type="number" class="stdCourseCredit" placeholder="Credit Hours" min="0" step="0.5" /></td>
             <td><button type="button" class="stdRemoveRowBtn" title="Remove">&#10006;</button></td>
@@ -548,6 +531,80 @@ document.addEventListener('DOMContentLoaded', function () {
     });
 
     // End Semester CGPA Calculator Modal
+
+    // --- Grade Scale Customization Modal ---
+    const gradeScaleBtn = document.getElementById('gradeScaleBtn');
+    const gradeScaleModal = document.getElementById('gradeScaleModal');
+    const gradeScaleClose = document.getElementById('gradeScaleClose');
+    const gradeScaleTableBody = document.getElementById('gradeScaleTableBody');
+    const gradeScaleSaveBtn = document.getElementById('gradeScaleSaveBtn');
+    const gradeScaleResetBtn = document.getElementById('gradeScaleResetBtn');
+
+    function openGradeScaleModal() {
+        populateGradeScaleEditor();
+        gradeScaleModal.style.display = 'block';
+    }
+
+    function closeGradeScaleModal() {
+        gradeScaleModal.style.display = 'none';
+    }
+
+    function populateGradeScaleEditor() {
+        gradeScaleTableBody.innerHTML = '';
+        Object.keys(gradePointMap).sort().forEach(grade => {
+            const row = gradeScaleTableBody.insertRow();
+            row.innerHTML = `
+                <td>${grade}</td>
+                <td><input type="number" class="grade-point-input" data-grade="${grade}" value="${gradePointMap[grade]}" step="0.01" /></td>
+            `;
+        });
+    }
+
+    function updateGradeScale(newMap) {
+        gradePointMap = newMap;
+        saveGradeMap();
+        allCourses.forEach(c => {
+            c.gradePoint = gradePointMap[c.grade] !== undefined ? gradePointMap[c.grade] : 0;
+        });
+        saveCourses();
+        updateDashboard();
+        populateGradeLegendTable();
+        showToast('Grading scale updated.');
+    }
+
+    gradeScaleBtn.addEventListener('click', openGradeScaleModal);
+    gradeScaleClose.addEventListener('click', closeGradeScaleModal);
+    window.addEventListener('click', function (e) {
+        if (e.target === gradeScaleModal) closeGradeScaleModal();
+    });
+
+    gradeScaleSaveBtn.addEventListener('click', () => {
+        const inputs = gradeScaleTableBody.querySelectorAll('.grade-point-input');
+        const newMap = {};
+        let isValid = true;
+        inputs.forEach(input => {
+            const grade = input.dataset.grade;
+            const point = parseFloat(input.value);
+            if (isNaN(point)) {
+                isValid = false;
+            }
+            newMap[grade] = point;
+        });
+
+        if (!isValid) {
+            alert('Please enter valid numbers for all grade points.');
+            return;
+        }
+        updateGradeScale(newMap);
+        closeGradeScaleModal();
+    });
+
+    gradeScaleResetBtn.addEventListener('click', () => {
+        if (confirm('Are you sure you want to reset the grading scale to the default values? This will also recalculate your GPA.')) {
+            updateGradeScale({ ...defaultGradePointMap });
+            populateGradeScaleEditor();
+        }
+    });
 
     // Initial setup
     addCourseRow();

@@ -47,19 +47,7 @@
           <div class="legend-card">
             <h4 style="margin-top:0;">Grade Legend</h4>
             <table>
-              <thead><tr><th>Letter</th><th>Point</th></tr></thead>
-              <tbody>
-                <tr><td>A+, A</td><td>4.00</td></tr>
-                <tr><td>A-</td><td>3.67</td></tr>
-                <tr><td>B+</td><td>3.33</td></tr>
-                <tr><td>B</td><td>3.00</td></tr>
-                <tr><td>B-</td><td>2.67</td></tr>
-                <tr><td>C+</td><td>2.00</td></tr>
-                <tr><td>C</td><td>1.50</td></tr>
-                <tr><td>C-</td><td>1.00</td></tr>
-                <tr><td>D+, D</td><td>1.00</td></tr>
-                <tr><td>F</td><td>0.00</td></tr>
-              </tbody>
+              <tbody id="gradeLegendBody"></tbody>
             </table>
             <p style="font-size:0.9rem;margin-top:8px;color:var(--text-muted-color);">Use these grade-point mappings when adding courses. The calculator uses the grade points multiplied by credits to compute GPA.</p>
           </div>
@@ -107,6 +95,12 @@
           class="icon-btn"
           style="margin-left: 10px">
           Semester CGPA Calculator
+        </button>
+        <button
+          type="button"
+          id="gradeScaleBtn"
+          class="icon-btn">
+          Customize Grading Scale
         </button>
       </section>
       
@@ -161,6 +155,27 @@
     </div>
 
     <div id="toastContainer"></div>
+
+    <!-- Grade Scale Modal -->
+    <div id="gradeScaleModal" class="modal">
+      <div class="modal-content">
+        <span id="gradeScaleClose" class="close-btn">&times;</span>
+        <h2>Customize Grading Scale</h2>
+        <p>Adjust the point value for each letter grade to match your institution's scale.</p>
+        <table class="input-table">
+          <thead>
+            <tr><th>Grade</th><th>Point Value</th></tr>
+          </thead>
+          <tbody id="gradeScaleTableBody">
+            <!-- JS will populate this -->
+          </tbody>
+        </table>
+        <button type="button" id="gradeScaleSaveBtn" class="primary-btn">Save Scale</button>
+        <button type="button" id="gradeScaleResetBtn" class="icon-btn" style="margin-left: 10px;">
+          Reset to Default
+        </button>
+      </div>
+    </div>
 
     <!-- Standard GPA Calculator Modal -->
     <div id="stdGpaModal" class="modal">
@@ -230,4 +245,3 @@
     </script>
   </body>
 </html>
-
