@@ -53,6 +53,41 @@ document.addEventListener('DOMContentLoaded', function () {
         return options;
     }
 
+    function loadGradeMap() {
+        const savedMap = localStorage.getItem('gradePointMap');
+        if (savedMap) {
+            try {
+                const parsedMap = JSON.parse(savedMap);
+                if (typeof parsedMap === 'object' && parsedMap !== null && Object.keys(parsedMap).length > 0) {
+                    gradePointMap = parsedMap;
+                } else {
+                    gradePointMap = { ...defaultGradePointMap };
+                }
+            } catch (e) {
+                console.error("Error parsing saved grade map, using default.", e);
+                gradePointMap = { ...defaultGradePointMap };
+            }
+        } else {
+            gradePointMap = { ...defaultGradePointMap };
+        }
+    }
+
+    function populateGradeLegendTable() {
+        const legendBody = document.getElementById('gradeLegendBody');
+        if (!legendBody) return;
+        legendBody.innerHTML = '';
+        const headerRow = legendBody.insertRow();
+        headerRow.innerHTML = `<th>Grade</th><th>Point</th>`;
+        // Sort for consistent order
+        Object.keys(gradePointMap).sort().forEach(grade => {
+            const point = gradePointMap[grade];
+            if (typeof point !== 'number') return; // Skip if point is not a number
+            const row = legendBody.insertRow();
+            row.innerHTML = `<td>${grade}</td><td>${point.toFixed(2)}</td>`;
+        });
+    }
+
+
     // Dynamic course input rows
     function addCourseRow() {
         const row = coursesInputTable.insertRow();
@@ -126,9 +161,17 @@ document.addEventListener('DOMContentLoaded', function () {
         const savedTheme = localStorage.getItem('theme') || 'light';
         applyTheme(savedTheme);
 
+        // Load grade scale FIRST, as it's needed for calculations and UI rendering
+        loadGradeMap();
+        populateGradeLegendTable(); // Populate legend on initial load
+
         // Load courses
         const savedCourses = JSON.parse(localStorage.getItem('allCourses'));
         if (savedCourses) {
+            // Recalculate grade points based on the current (possibly custom) scale
+            savedCourses.forEach(c => {
+                c.gradePoint = gradePointMap[c.grade] !== undefined ? gradePointMap[c.grade] : 0;
+            });
             allCourses = savedCourses;
         }
         updateDashboard();
@@ -210,6 +253,7 @@ document.addEventListener('DOMContentLoaded', function () {
                     <button class="removeRowBtn" title="Delete">&#10006;</button>
                 </td>
             `;
+            tr.style.animationDelay = `${index * 40}ms`; // Staggered animation
             coursesTableBody.appendChild(tr);
         });
     }
@@ -382,72 +426,6 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     }
 
-    // --- Standard GPA Calculator Modal ---
-    // Elements
-    const stdGpaBtn = document.getElementById('stdGpaBtn');
-    const stdGpaModal = document.getElementById('stdGpaModal');
-    const stdGpaClose = document.getElementById('stdGpaClose');
-    const stdGpaTableBody = document.getElementById('stdGpaTableBody');
-    const stdGpaAddRowBtn = document.getElementById('stdGpaAddRowBtn');
-    const stdGpaCalcBtn = document.getElementById('stdGpaCalcBtn');
-    const stdGpaResult = document.getElementById('stdGpaResult');
-
-    function openStdGpaModal() {
-        stdGpaModal.style.display = 'block';
-        stdGpaTableBody.innerHTML = '';
-        addStdGpaRow();
-        stdGpaResult.textContent = '';
-    }
-    function closeStdGpaModal() {
-        stdGpaModal.style.display = 'none';
-    }
-    stdGpaBtn.addEventListener('click', openStdGpaModal);
-    stdGpaClose.addEventListener('click', closeStdGpaModal);
-    window.addEventListener('click', function (e) {
-        if (e.target === stdGpaModal) closeStdGpaModal();
-    });
-
-    function addStdGpaRow() {
-        const row = stdGpaTableBody.insertRow();
-        row.innerHTML = `
-            <td><input type="text" class="stdCourseName" placeholder="Course Name" /></td>
-            <td>
-                <select class="stdCourseGrade"><option value="">Grade</option>${getGradeOptionsHTML()}</select>
-            </td>
-            <td><input type="number" class="stdCourseCredit" placeholder="Credit Hours" min="0" step="0.5" /></td>
-            <td><button type="button" class="stdRemoveRowBtn" title="Remove">&#10006;</button></td>
-        `;
-        row.querySelector('.stdRemoveRowBtn').onclick = function () {
-            row.remove();
-        };
-    }
-    stdGpaAddRowBtn.addEventListener('click', addStdGpaRow);
-
-    stdGpaCalcBtn.addEventListener('click', function () {
-        const names = Array.from(stdGpaTableBody.getElementsByClassName('stdCourseName')).map(i => i.value.trim());
-        const grades = Array.from(stdGpaTableBody.getElementsByClassName('stdCourseGrade')).map(i => i.value.trim());
-        const credits = Array.from(stdGpaTableBody.getElementsByClassName('stdCourseCredit')).map(i => i.value.trim());
-        let valid = true, totalPoints = 0, totalCredits = 0;
-        for (let i = 0; i < names.length; i++) {
-            const gradePoint = gradePointMap[grades[i]];
-            const credit = parseFloat(credits[i]);
-            if (!names[i] || !grades[i] || typeof gradePoint === 'undefined' || isNaN(credit) || credit <= 0) {
-                valid = false;
-                break;
-            }
-            totalPoints += gradePoint * credit;
-            totalCredits += credit;
-        }
-        if (!valid || totalCredits === 0) {
-            stdGpaResult.textContent = 'Please enter valid data for all rows.';
-            return;
-        }
-        const gpa = (totalPoints / totalCredits).toFixed(2);
-        stdGpaResult.textContent = `Calculated GPA: ${gpa}`;
-    });
-
-    // --- End Standard GPA Calculator Modal ---
-
     // --- Semester CGPA Calculator Modal ---
     const semCgpaBtn = document.getElementById('semCgpaBtn');
     const semCgpaModal = document.getElementById('semCgpaModal');
@@ -596,7 +574,19 @@ document.addEventListener('DOMContentLoaded', function () {
             return;
         }
         updateGradeScale(newMap);
-        closeGradeScaleModal();
+
+        // --- Visual Feedback ---
+        const originalText = gradeScaleSaveBtn.textContent;
+        gradeScaleSaveBtn.textContent = 'Saved!';
+        gradeScaleSaveBtn.classList.add('is-success');
+        gradeScaleSaveBtn.disabled = true;
+
+        setTimeout(() => {
+            gradeScaleSaveBtn.textContent = originalText;
+            gradeScaleSaveBtn.classList.remove('is-success');
+            gradeScaleSaveBtn.disabled = false;
+            closeGradeScaleModal();
+        }, 1500);
     });
 
     gradeScaleResetBtn.addEventListener('click', () => {
