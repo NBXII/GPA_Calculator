@@ -197,24 +197,93 @@ document.addEventListener('DOMContentLoaded', function () {
         coursesTableBody.innerHTML = '';
         courses.forEach((c, index) => {
             const tr = document.createElement('tr');
+            tr.dataset.index = index;
             tr.innerHTML = `
                 <td>${c.name}</td>
                 <td>${c.grade}</td>
                 <td>${c.gradePoint.toFixed(2)}</td>
                 <td>${c.credit.toFixed(1)}</td>
-                <td><button class="removeRowBtn" data-index="${index}" title="Delete">&#10006;</button></td>
+                <td>
+                    <button class="editRowBtn" title="Edit">&#9998;</button>
+                    <button class="removeRowBtn" title="Delete">&#10006;</button>
+                </td>
             `;
             coursesTableBody.appendChild(tr);
         });
     }
 
-    // --- Delete with Undo ---
+    // --- Course Table Actions (Edit/Delete/Undo) ---
     coursesTableBody.addEventListener('click', function (e) {
-        if (e.target.classList.contains('removeRowBtn')) {
-            const index = parseInt(e.target.dataset.index, 10);
-            deleteCourse(index);
-        }
+        const target = e.target;
+        const row = target.closest('tr');
+        if (!row || !coursesTableBody.contains(row)) return;
+
+        handleCourseAction(target, row);
     });
+
+    function handleCourseAction(target, row) {
+        const index = parseInt(row.dataset.index, 10);
+        if (isNaN(index)) return;
+
+        if (target.closest('.editRowBtn')) {
+            const otherEditingRow = coursesTableBody.querySelector('.is-editing');
+            if (otherEditingRow && otherEditingRow !== row) {
+                const otherIndex = parseInt(otherEditingRow.dataset.index, 10);
+                revertRowToDisplay(otherEditingRow, otherIndex);
+            }
+            turnRowToEditMode(row, index);
+        } else if (target.closest('.removeRowBtn')) {
+            deleteCourse(index);
+        } else if (target.closest('.saveRowBtn')) {
+            saveEditedCourse(row, index);
+        } else if (target.closest('.cancelEditBtn')) {
+            revertRowToDisplay(row, index);
+        }
+    }
+
+    function turnRowToEditMode(row, index) {
+        const course = allCourses[index];
+        row.classList.add('is-editing');
+
+        let gradeOptions = '';
+        Object.keys(gradePointMap).forEach(grade => {
+            gradeOptions += `<option value="${grade}" ${grade === course.grade ? 'selected' : ''}>${grade}</option>`;
+        });
+
+        row.innerHTML = `
+            <td><input type="text" class="courseName" value="${course.name}" /></td>
+            <td><select class="courseGrade">${gradeOptions}</select></td>
+            <td>-</td>
+            <td><input type="number" class="courseCredit" value="${course.credit}" min="0" step="0.5" /></td>
+            <td>
+                <button class="saveRowBtn" title="Save">&#10004;</button>
+                <button class="cancelEditBtn" title="Cancel">&#10006;</button>
+            </td>
+        `;
+        row.querySelector('input').focus();
+    }
+
+    function saveEditedCourse(row, index) {
+        const name = row.querySelector('.courseName').value.trim();
+        const gradeLetter = row.querySelector('.courseGrade').value;
+        const credit = parseFloat(row.querySelector('.courseCredit').value);
+        const gradePoint = gradePointMap[gradeLetter];
+
+        if (name && gradeLetter && !isNaN(credit) && credit > 0) {
+            allCourses[index] = { name, grade: gradeLetter, gradePoint, credit };
+            saveCourses();
+            updateDashboard();
+        } else {
+            alert('Please ensure all fields are filled correctly. Credit hours must be greater than 0.');
+        }
+    }
+
+    function revertRowToDisplay(row, index) {
+        const course = allCourses[index];
+        row.classList.remove('is-editing');
+        // Re-populate just this one row to its original state
+        populateTable(allCourses);
+    }
 
     function deleteCourse(index) {
         // Store deleted item for possible undo
@@ -474,7 +543,7 @@ document.addEventListener('DOMContentLoaded', function () {
             result = (simpleSum / count).toFixed(3);
             const num = parseFloat(result);
             const label = getDistinctionLabel(num);
-            semCgpaResult.innerHTML = `Unweighted CGPA: ${result} (simple average) <span class="distinction-badge ${label.cls}" style="margin-left:8px">${label.text}</span>`;
+            semCgpaResult.innerHTML = `Unweighted CGPA: ${result} <span class="distinction-badge ${label.cls}" style="margin-left:8px">${label.text}</span>`;
         }
     });
 

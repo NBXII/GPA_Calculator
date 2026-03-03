@@ -221,6 +221,26 @@ h1 {
     color: #fff;
 }
 
+.editRowBtn {
+    background: var(--bg-color);
+    color: var(--primary-color);
+    border: 1px solid var(--border-color);
+    border-radius: 50%;
+    width: 36px;
+    height: 36px;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: all 0.2s;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    margin-right: 8px;
+}
+.editRowBtn:hover {
+    background-color: var(--primary-color);
+    color: #fff;
+}
+
 .results-section {
     margin-top: 40px;
 }
@@ -309,6 +329,12 @@ h2 {
     border: 1px solid var(--border-color-light);
     padding: 12px;
     text-align: left;
+    vertical-align: middle;
+}
+
+#coursesTable th:last-child, #coursesTable td:last-child {
+    text-align: right;
+    white-space: nowrap;
 }
 
 #coursesTable th {
@@ -323,6 +349,35 @@ h2 {
 #coursesTable tbody tr:nth-child(odd) {
     background: var(--bg-color);
 }
+
+/* Styles for in-place editing in the courses overview table */
+#coursesTable .is-editing td {
+    vertical-align: middle;
+}
+#coursesTable .is-editing input,
+#coursesTable .is-editing select {
+    width: 95%;
+    padding: 8px;
+    border: 1px solid var(--border-color);
+    border-radius: 6px;
+    font-size: 1rem;
+    font-family: 'Poppins', sans-serif;
+    background-color: var(--bg-secondary-color);
+    color: var(--text-color);
+}
+
+.saveRowBtn, .cancelEditBtn {
+    background: transparent;
+    border: none;
+    font-size: 1.4rem;
+    cursor: pointer;
+    padding: 4px;
+    margin: 0 4px;
+    transition: transform 0.2s;
+}
+.saveRowBtn:hover, .cancelEditBtn:hover { transform: scale(1.2); }
+.saveRowBtn { color: #28a745; }
+.cancelEditBtn { color: var(--danger-color); }
 
 .chart-wrapper {
     padding: 24px;
