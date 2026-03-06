@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Number System Calculator - UniMetrics</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="css/base.css" />
+    <link rel="stylesheet" href="css/number-system-calculator.css" />
+    <link rel="icon" href="assets/Logo.jpg" type="image/x-icon" />
+</head>
+<body>
+    <div class="container">
+        <a href="index.html" class="back-link">← Back to Home</a>
+        <header>
+            <h1>Number System Calculator</h1>
+            <p class="subtitle">
+                Convert between different number bases with ease.
+            </p>
+            <button id="themeToggleBtn" class="theme-btn">🌙</button>
+        </header>
+
+        <main id="numberSystemContainer">
+            <section class="converter-card">
+                <div class="converter-grid">
+                    <div class="input-group">
+                        <label for="inputDec">Decimal (Base 10)</label>
+                        <input type="text" id="inputDec" placeholder="e.g. 42" autocomplete="off">
+                    </div>
+                    <div class="input-group">
+                        <label for="inputBin">Binary (Base 2)</label>
+                        <input type="text" id="inputBin" placeholder="e.g. 101010" autocomplete="off">
+                    </div>
+                    <div class="input-group">
+                        <label for="inputOct">Octal (Base 8)</label>
+                        <input type="text" id="inputOct" placeholder="e.g. 52" autocomplete="off">
+                    </div>
+                    <div class="input-group">
+                        <label for="inputHex">Hexadecimal (Base 16)</label>
+                        <input type="text" id="inputHex" placeholder="e.g. 2A" autocomplete="off">
+                    </div>
+                </div>
+            </section>
+
+            <section id="explanationSection" class="explanation-section" style="display:none;">
+                <h2>How it Works</h2>
+                <div id="explanationContainer"></div>
+            </section>
+        </main>
+
+        <footer>
+            <p>&copy; <span id="year"></span> UniMetrics</p>
+        </footer>
+    </div>
+    <script src="js/main.js"></script>
+    <script>
+        document.getElementById("year").textContent = new Date().getFullYear();
+    </script>
+</body>
+</html>

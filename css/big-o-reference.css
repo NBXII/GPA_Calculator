@@ -1,0 +1,116 @@
+.bigo-controls {
+    margin-bottom: 32px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+#bigoSearch {
+    width: 100%;
+    padding: 14px 20px;
+    font-size: 1.1rem;
+    border-radius: 12px;
+    border: 2px solid var(--border-color);
+    background-color: var(--bg-secondary-color);
+    color: var(--text-color);
+    transition: all 0.2s;
+    box-sizing: border-box;
+}
+#bigoSearch:focus {
+    border-color: var(--primary-color);
+    outline: none;
+    box-shadow: 0 0 0 4px rgba(74, 105, 226, 0.1);
+}
+
+.category-tabs {
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+}
+
+.tab-btn {
+    padding: 8px 20px;
+    font-size: 1rem;
+    font-weight: 600;
+    border-radius: 20px;
+    border: 1px solid var(--border-color);
+    background: transparent;
+    color: var(--text-muted-color);
+    cursor: pointer;
+    transition: all 0.2s;
+}
+.tab-btn:hover {
+    color: var(--primary-color);
+    border-color: var(--primary-color);
+}
+.tab-btn.active {
+    background: var(--primary-color);
+    color: #fff;
+    border-color: var(--primary-color);
+}
+
+.bigo-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+    gap: 24px;
+}
+
+.bigo-card {
+    background: var(--bg-secondary-color);
+    border-radius: 16px;
+    border: 1px solid var(--border-color-light);
+    box-shadow: 0 4px 20px rgba(0,0,0,0.05);
+    overflow: hidden;
+    animation: slideInUp 0.4s ease-out;
+}
+
+.bigo-card-header {
+    padding: 20px;
+    border-bottom: 1px solid var(--border-color-light);
+}
+.bigo-card-header h3 {
+    margin: 0;
+    color: var(--text-color);
+    font-size: 1.4rem;
+}
+
+.bigo-card-body {
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.complexity-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.complexity-label {
+    font-weight: 500;
+    color: var(--text-muted-color);
+}
+
+.complexity-value {
+    font-family: 'Courier New', monospace;
+    font-weight: bold;
+    padding: 4px 10px;
+    border-radius: 6px;
+    font-size: 0.9rem;
+}
+
+/* Color coding for complexities */
+.c-green { background-color: rgba(40, 167, 69, 0.1); color: #28a745; }
+.c-blue { background-color: rgba(23, 162, 184, 0.1); color: #17a2b8; }
+.c-yellow { background-color: rgba(255, 193, 7, 0.1); color: #e8b300; }
+.c-orange { background-color: rgba(253, 126, 20, 0.1); color: #fd7e14; }
+.c-red { background-color: rgba(220, 53, 69, 0.1); color: #dc3545; }
+
+.no-results {
+    text-align: center;
+    padding: 40px;
+    color: var(--text-muted-color);
+    font-size: 1.1rem;
+    font-weight: 500;
+}

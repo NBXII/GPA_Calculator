@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Degree Tracker - UniMetrics</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="css/base.css" />
+    <link rel="stylesheet" href="css/degree-tracker.css" />
+    <link rel="icon" href="assets/Logo.jpg" type="image/x-icon" />
+    <link rel="stylesheet" href="css/base.css" />
+    <link rel="stylesheet" href="css/degree-tracker.css" />
+</head>
+<body>
+    <div class="container">
+        <a href="index.html" class="back-link">← Back to Home</a>
+        <header>
+            <h1>Degree Tracker</h1>
+            <p class="subtitle">
+                Visualize your path to graduation.
+            </p>
+            <button id="themeToggleBtn" class="theme-btn">🌙</button>
+        </header>
+
+        <main id="trackerContainer">
+            <section class="tracker-summary">
+                <div class="summary-card">
+                    <div class="card-title">Total Credits for Degree</div>
+                    <input type="number" id="degreeCreditsTarget" class="card-value" value="120" min="1">
+                </div>
+                <div class="summary-card">
+                    <div class="card-title">Credits Completed</div>
+                    <div id="creditsCompleted" class="card-value">0</div>
+                </div>
+                <div class="summary-card">
+                    <div class="card-title">Credits Remaining</div>
+                    <div id="creditsRemaining" class="card-value">120</div>
+                </div>
+            </section>
+
+            <section class="progress-section">
+                <h2>Degree Progress</h2>
+                <div class="progress-bar-container">
+                    <div id="degreeProgressBar" class="progress-bar"></div>
+                    <div id="degreeProgressText" class="progress-bar-text">0%</div>
+                </div>
+            </section>
+
+            <section class="completed-courses-section">
+                <h2>Completed Courses</h2>
+                <ul id="completedCoursesList"></ul>
+                <div id="noCoursesMessage" style="display: none;">
+                    <p>No courses found. Go to the <a href="gpa-calculator.html">GPA Calculator</a> to add your completed courses.</p>
+                </div>
+            </section>
+
+            <section class="target-calculator-section">
+                <h2>Target GPA Forecaster</h2>
+                <div class="target-calc-card">
+                    <p class="target-desc">Calculate the average GPA you need to maintain for your remaining credits to reach your graduation goal.</p>
+                    <div class="target-input-group">
+                        <label for="targetGpaInput">Target Graduation GPA</label>
+                        <input type="number" id="targetGpaInput" step="0.01" min="0" max="4.0" placeholder="e.g. 3.5">
+                    </div>
+                    <div class="target-result">
+                        <span class="result-label">Required GPA:</span>
+                        <span id="requiredGpaDisplay" class="result-value">-</span>
+                    </div>
+                </div>
+            </section>
+        </main>
+
+        <footer>
+            <p>&copy; <span id="year"></span> UniMetrics</p>
+        </footer>
+    </div>
+    <div id="toastContainer"></div>
+    <script src="js/main.js"></script>
+    <script>
+        document.getElementById("year").textContent = new Date().getFullYear();
+    </script>
+</body>
+</html>

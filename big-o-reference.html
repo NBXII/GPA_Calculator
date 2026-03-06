@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Big-O Reference - UniMetrics</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="css/base.css" />
+    <link rel="stylesheet" href="css/big-o-reference.css" />
+    <link rel="icon" href="assets/Logo.jpg" type="image/x-icon" />
+</head>
+<body>
+    <div class="container">
+        <a href="index.html" class="back-link">← Back to Home</a>
+        <header>
+            <h1>Big-O Reference Tool</h1>
+            <p class="subtitle">
+                A quick reference for common algorithm complexities.
+            </p>
+            <button id="themeToggleBtn" class="theme-btn">🌙</button>
+        </header>
+
+        <main>
+            <div class="bigo-controls">
+                <input type="text" id="bigoSearch" placeholder="Search (e.g., 'Array' or 'Quick Sort')...">
+                <div class="category-tabs" id="bigoCategoryTabs">
+                    <button class="tab-btn active" data-category="all">All</button>
+                    <button class="tab-btn" data-category="ds">Data Structures</button>
+                    <button class="tab-btn" data-category="sort">Sorting Algorithms</button>
+                </div>
+            </div>
+            <div id="bigoGrid" class="bigo-grid">
+                <!-- Cards will be injected by JS -->
+            </div>
+            <div id="noResults" class="no-results" style="display: none;">No results found.</div>
+        </main>
+
+        <footer>
+            <p>&copy; <span id="year"></span> UniMetrics</p>
+        </footer>
+    </div>
+    <script src="js/main.js"></script>
+    <script>
+        document.getElementById("year").textContent = new Date().getFullYear();
+    </script>
+</body>
+</html>

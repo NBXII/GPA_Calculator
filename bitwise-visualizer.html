@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Bitwise Operation Visualizer - UniMetrics</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="css/base.css" />
+    <link rel="stylesheet" href="css/bitwise-visualizer.css" />
+    <link rel="icon" href="assets/Logo.jpg" type="image/x-icon" />
+</head>
+<body>
+    <div class="container">
+        <a href="index.html" class="back-link">← Back to Home</a>
+        <header>
+            <h1>Bitwise Operation Visualizer</h1>
+            <p class="subtitle">
+                See bitwise operations in action.
+            </p>
+            <button id="themeToggleBtn" class="theme-btn">🌙</button>
+        </header>
+
+        <main id="bitwiseContainer">
+            <section class="bitwise-card">
+                <div class="controls-grid">
+                    <div class="input-group">
+                        <label for="numA">Operand A (0-255)</label>
+                        <input type="number" id="numA" value="85" min="0" max="255">
+                    </div>
+                    <div class="op-buttons">
+                        <button class="op-btn active" data-op="AND">&</button>
+                        <button class="op-btn" data-op="OR">|</button>
+                        <button class="op-btn" data-op="XOR">^</button>
+                        <button class="op-btn" data-op="NOT">~</button>
+                        <button class="op-btn" data-op="LSHIFT">&lt;&lt;</button>
+                        <button class="op-btn" data-op="RSHIFT">&gt;&gt;</button>
+                    </div>
+                    <div class="input-group" id="numB-group">
+                        <label for="numB" id="numB-label">Operand B (0-255)</label>
+                        <input type="number" id="numB" value="204" min="0" max="255">
+                    </div>
+                </div>
+            </section>
+
+            <section class="visualization-section">
+                <div class="viz-container">
+                    <div id="viz-row-A" class="viz-row"></div>
+                    <div id="viz-row-op" class="viz-row op-row"></div>
+                    <div id="viz-row-B" class="viz-row"></div>
+                    <div class="viz-line"></div>
+                    <div id="viz-row-result" class="viz-row result-row"></div>
+                </div>
+            </section>
+
+            <section class="explanation-panel">
+                <h3 id="explanation-title"></h3>
+                <p id="explanation-text"></p>
+            </section>
+        </main>
+
+        <footer>
+            <p>&copy; <span id="year"></span> UniMetrics</p>
+        </footer>
+    </div>
+    <script src="js/main.js"></script>
+    <script>
+        document.getElementById("year").textContent = new Date().getFullYear();
+    </script>
+</body>
+</html>

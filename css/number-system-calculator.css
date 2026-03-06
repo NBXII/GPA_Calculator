@@ -1,0 +1,96 @@
+/* Number System Calculator Styles */
+
+.converter-card {
+    background: var(--bg-secondary-color);
+    border-radius: 16px;
+    padding: 32px;
+    border: 1px solid var(--border-color-light);
+    box-shadow: 0 4px 20px rgba(0,0,0,0.05);
+    margin-bottom: 32px;
+    animation: slideInUp 0.4s ease-out;
+}
+
+.converter-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 24px;
+}
+
+.input-group {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.input-group label {
+    font-weight: 600;
+    color: var(--text-muted-color);
+    font-size: 0.9rem;
+}
+
+.input-group input {
+    padding: 14px;
+    border: 2px solid var(--border-color);
+    border-radius: 10px;
+    font-size: 1.1rem;
+    background-color: var(--bg-color);
+    color: var(--text-color);
+    font-family: 'Courier New', monospace;
+    transition: all 0.2s;
+}
+
+.input-group input:focus {
+    border-color: var(--primary-color);
+    outline: none;
+    box-shadow: 0 0 0 4px rgba(74, 105, 226, 0.1);
+}
+
+/* Explanation Section */
+.explanation-section {
+    animation: slideInUp 0.5s ease-out;
+}
+
+.explanation-block {
+    background: var(--bg-secondary-color);
+    border: 1px solid var(--border-color-light);
+    border-radius: 12px;
+    padding: 24px;
+    margin-bottom: 24px;
+}
+
+.explanation-block h3 {
+    margin-top: 0;
+    color: var(--primary-color);
+    font-size: 1.2rem;
+    margin-bottom: 16px;
+    border-bottom: 1px solid var(--border-color-light);
+    padding-bottom: 8px;
+}
+
+.step-row {
+    font-family: 'Courier New', monospace;
+    margin-bottom: 8px;
+    color: var(--text-color);
+    font-size: 0.95rem;
+}
+
+.calc-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-family: 'Courier New', monospace;
+    font-size: 0.9rem;
+    margin-top: 12px;
+}
+
+.calc-table th {
+    text-align: left;
+    border-bottom: 2px solid var(--border-color);
+    padding: 8px;
+    color: var(--text-muted-color);
+}
+
+.calc-table td {
+    padding: 8px;
+    border-bottom: 1px solid var(--border-color-light);
+    color: var(--text-color);
+}

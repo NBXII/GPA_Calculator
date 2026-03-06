@@ -1,0 +1,148 @@
+/* Bitwise Visualizer Styles */
+
+.bitwise-card {
+    background: var(--bg-secondary-color);
+    border-radius: 16px;
+    padding: 32px;
+    border: 1px solid var(--border-color-light);
+    box-shadow: 0 4px 20px rgba(0,0,0,0.05);
+    margin-bottom: 32px;
+}
+
+.controls-grid {
+    display: grid;
+    grid-template-columns: 1fr auto 1fr;
+    gap: 24px;
+    align-items: end;
+}
+
+.input-group label {
+    font-weight: 600;
+    color: var(--text-muted-color);
+    font-size: 0.9rem;
+    display: block;
+    margin-bottom: 8px;
+}
+
+.input-group input {
+    width: 100%;
+    padding: 14px;
+    border: 2px solid var(--border-color);
+    border-radius: 10px;
+    font-size: 1.1rem;
+    background-color: var(--bg-color);
+    color: var(--text-color);
+    font-family: 'Courier New', monospace;
+    transition: all 0.2s;
+    box-sizing: border-box;
+}
+
+.op-buttons {
+    display: flex;
+    gap: 8px;
+    background: var(--bg-color);
+    padding: 8px;
+    border-radius: 12px;
+    border: 1px solid var(--border-color);
+}
+
+.op-btn {
+    width: 44px;
+    height: 44px;
+    border-radius: 8px;
+    border: none;
+    background: transparent;
+    color: var(--text-muted-color);
+    font-size: 1.2rem;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+.op-btn:hover {
+    background: var(--border-color-light);
+    color: var(--primary-color);
+}
+.op-btn.active {
+    background: var(--primary-color);
+    color: #fff;
+    box-shadow: 0 2px 10px rgba(74, 105, 226, 0.3);
+}
+
+.visualization-section {
+    background: var(--bg-secondary-color);
+    border-radius: 16px;
+    padding: 32px;
+    border: 1px solid var(--border-color-light);
+    box-shadow: 0 4px 20px rgba(0,0,0,0.05);
+    margin-bottom: 32px;
+    overflow-x: auto;
+}
+
+.viz-container {
+    display: inline-block;
+    min-width: 100%;
+}
+
+.viz-row {
+    display: flex;
+    justify-content: space-between;
+    font-family: 'Courier New', monospace;
+    font-size: 1.5rem;
+    font-weight: bold;
+    gap: 8px;
+}
+
+.viz-row.op-row {
+    color: var(--text-muted-color);
+    font-size: 1.2rem;
+    margin: 4px 0;
+}
+
+.viz-row.result-row {
+    color: var(--primary-color);
+}
+
+.bit-box {
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 2px solid var(--border-color);
+    border-radius: 8px;
+    transition: all 0.3s;
+    animation: popIn 0.4s ease-out;
+}
+
+.viz-line {
+    height: 2px;
+    background: var(--border-color);
+    margin: 16px 0;
+}
+
+.explanation-panel {
+    background: var(--bg-color);
+    border-radius: 12px;
+    padding: 24px;
+    border: 1px solid var(--border-color-light);
+}
+.explanation-panel h3 {
+    margin-top: 0;
+    color: var(--primary-color);
+}
+.explanation-panel p {
+    margin-bottom: 0;
+    line-height: 1.6;
+    color: var(--text-muted-color);
+}
+
+@keyframes popIn {
+    from { transform: scale(0.5); opacity: 0; }
+    to { transform: scale(1); opacity: 1; }
+}
+
+@media (max-width: 768px) {
+    .controls-grid {
+        grid-template-columns: 1fr;
+    }
+}
