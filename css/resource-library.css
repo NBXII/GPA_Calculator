@@ -1,0 +1,184 @@
+/* Styles for Resource Library Page */
+
+main {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 40px;
+}
+
+.resources-section {
+    background: var(--bg-secondary-color);
+    padding: 30px;
+    border-radius: 16px;
+    border: 1px solid var(--border-color-light);
+    box-shadow: 0 8px 30px var(--shadow-color);
+}
+
+.section-header-inline {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 24px;
+    padding-bottom: 16px;
+    border-bottom: 1px solid var(--border-color);
+}
+.section-header-inline h2 {
+    margin: 0;
+    font-size: 1.5rem;
+    color: var(--text-color);
+}
+.header-main {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    flex-grow: 1;
+}
+.search-input {
+    padding: 8px 16px;
+    border-radius: 20px;
+    border: 1px solid var(--border-color);
+    background: var(--bg-color);
+    color: var(--text-color);
+    width: 250px;
+    transition: all 0.3s ease;
+}
+.search-input:focus {
+    border-color: var(--primary-color);
+    width: 300px;
+}
+
+.grid-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 20px;
+}
+
+/* --- Resource Cards --- */
+.resource-card {
+    background: var(--bg-color);
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
+    padding: 20px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    min-height: 180px;
+}
+.resource-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+}
+.resource-card h3 {
+    margin-top: 0;
+    margin-bottom: 10px;
+    font-size: 1.2rem;
+    color: var(--primary-color);
+    word-break: break-word;
+}
+.resource-card p {
+    font-size: 0.95rem;
+    color: var(--text-muted-color);
+    line-height: 1.5;
+    flex-grow: 1;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: -webkit-box;
+    -webkit-line-clamp: 3; /* Limit to 3 lines */
+    -webkit-box-orient: vertical;
+}
+.resource-card .resource-link {
+    display: inline-block;
+    margin-top: 10px;
+    font-size: 0.9rem;
+    color: var(--primary-color);
+    text-decoration: none;
+    font-weight: 500;
+}
+.resource-card .resource-link:hover {
+    text-decoration: underline;
+}
+.resource-card .resource-tags {
+    margin-top: 10px;
+    font-size: 0.8rem;
+    color: var(--text-muted-color);
+}
+.resource-card .resource-tags span {
+    background: var(--border-color-light);
+    padding: 4px 8px;
+    border-radius: 5px;
+    margin-right: 5px;
+    display: inline-block;
+    margin-bottom: 5px;
+}
+
+/* --- Modals (reusing base.css modal styles) --- */
+.form-group {
+    margin-bottom: 16px;
+}
+.form-group label {
+    display: block;
+    font-weight: 500;
+    margin-bottom: 6px;
+    color: var(--text-muted-color);
+}
+.form-group input[type="text"],
+.form-group input[type="url"],
+.form-group textarea {
+    width: 100%;
+    padding: 10px 12px;
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    font-size: 1rem;
+    background-color: var(--bg-color);
+    color: var(--text-color);
+    box-sizing: border-box;
+}
+.form-group textarea {
+    resize: vertical;
+}
+
+.form-actions {
+    margin-top: 24px;
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+}
+
+/* Empty State (reusing notes-flashcards.css empty-state) */
+.empty-state {
+    text-align: center;
+    padding: 40px 20px;
+    color: var(--text-muted-color);
+    font-size: 1.1rem;
+    border: 2px dashed var(--border-color-light);
+    border-radius: 12px;
+    margin-top: 20px;
+    grid-column: 1 / -1; /* Span all columns in grid-list */
+}
+.empty-state i {
+    font-size: 3rem;
+    margin-bottom: 15px;
+    color: var(--primary-color);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .section-header-inline {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 15px;
+    }
+    .header-main {
+        flex-direction: column;
+        align-items: flex-start;
+        width: 100%;
+    }
+    .search-input {
+        width: 100%;
+    }
+    .grid-list {
+        grid-template-columns: 1fr;
+    }
+}

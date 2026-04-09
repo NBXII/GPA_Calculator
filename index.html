@@ -10,112 +10,175 @@
       href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap"
       rel="stylesheet"
     />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" integrity="sha512-9usAa10IRO0HhonpyAIVpjrylPvoDwiPUiKdWk5t3PyolY1cOd4DSE0Ga+ri4AuTroPR5aQvXU9xC6qOPnzFeg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
     <link rel="stylesheet" href="css/base.css" />
     <link rel="stylesheet" href="css/landing.css" />
     <link rel="icon" href="assets/Logo.jpg" type="image/x-icon" />
   </head>
   <body>
-    <div class="container">
-      <button id="themeToggleBtn" class="theme-btn">🌙</button>
-      
+    
+    <div id="pageContainer" class="container">
+      <nav class="top-nav">
+        <a href="#" class="nav-brand">UniMetrics</a>
+        <div class="nav-links">
+            <a href="#features">Why Us</a>
+            <a href="#tools-showcase">Toolkit</a>
+            <a href="gpa-calculator.html" class="nav-cta">Launch App</a>
+        </div>
+        <div class="nav-actions">
+            <button id="themeToggleBtn" class="theme-btn" aria-label="Toggle Theme">🌙</button>
+            <button class="hamburger-menu" id="hamburgerBtn" aria-label="Open Menu">
+                <i class="fa fa-bars"></i>
+            </button>
+        </div>
+      </nav>
+
       <section class="hero-section">
-        <div class="hero-content">
-            <div class="brand-definition-container scroll-animate">
-                <h1 class="brand-title">UniMetrics</h1>
-                <div class="brand-phonetic">/juːniˈmɛtrɪks/</div>
-            </div>
+        <div class="hero-bg-image"></div>
+        <div class="hero-bg-overlay"></div>
+        <div class="hero-content"> </br></br></br></br>
+            <div class="hero-badge scroll-animate">Student Academic Ecosystem</div>
+            <h1 class="brand-title scroll-animate" style="animation-delay: 0.1s;">
+                Elevate Your <span class="text-gradient">Academic</span> Potential
+            </h1>
             <p class="definition-text scroll-animate" style="animation-delay: 0.2s;">
-                <span class="def-part">noun.</span> A comprehensive digital ecosystem designed to elevate academic performance through precision tracking and interactive visualization.
+                Master your grades, optimize your focus, and visualize your progress with a privacy-first toolkit designed for the modern student.
             </p>
-            <a href="#main-content-start" id="exploreBtn" class="primary-btn scroll-animate" style="animation-delay: 0.4s;">Explore Platform</a>
+            <div class="hero-btns scroll-animate" style="animation-delay: 0.3s;">
+                <a href="#tools-showcase" id="exploreBtn" class="primary-btn glow-btn">Explore Toolkit</a>
+                <a href="#features" class="secondary-btn">Learn More</a>
+            </div>
+
+            <!-- Dashboard Widget (Hidden by default, shown via JS) -->
+            <div id="academicInsightsDashboard" class="hero-dashboard-widget scroll-animate" style="display: none; animation-delay: 0.4s;">
+                <div class="widget-header">
+                    <span class="widget-title">Your Progress</span>
+                    <i class="fas fa-chart-pie"></i>
+                </div>
+                <div class="widget-body">
+                    <div class="widget-stat">
+                        <span class="stat-label">CGPA</span>
+                        <span id="landingGpa" class="stat-value">-</span>
+                    </div>
+                    <div class="widget-divider"></div>
+                    <div class="widget-stat">
+                        <span class="stat-label">Credits</span>
+                        <span id="landingCredits" class="stat-value">-</span>
+                    </div>
+                </div>
+                <p id="landingMessage" class="widget-footer-msg">Welcome back!</p>
+            </div>
         </div>
       </section>
 
       <div id="main-content-start"></div>
 
       <main class="landing-main">
-        <!-- This section will be populated by main.js if data exists -->
-        <section id="academicInsightsDashboard" class="recent-activity scroll-animate" style="display: none;">
-            <h2>Academic Insights Dashboard</h2>
-            <div class="activity-card">
-                <div class="activity-info-group">
-                    <div class="activity-info">
-                        <span class="activity-label">Cumulative GPA</span>
-                        <span id="landingGpa" class="activity-value">-</span>
-                    </div>
-                    <div class="activity-info">
-                        <span class="activity-label">Total Credits</span>
-                        <span id="landingCredits" class="activity-value">-</span>
+        <section id="features" class="features-section scroll-animate">
+            <div class="section-header">
+                <h2>Designed for Excellence</h2>
+                <p>Everything you need to stay ahead of the curve.</p>
+            </div>
+            <div class="features-grid">
+                <div class="feature-card">
+                    <div class="feature-icon-wrapper"><i class="fas fa-chart-line"></i></div>
+                    <h3>Visual Analytics</h3>
+                    <p>Go beyond raw numbers. Visualize your academic trajectory with dynamic charts and grade distribution insights.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon-wrapper"><i class="fas fa-laptop-code"></i></div>
+                    <h3>CS Specialized</h3>
+                    <p>Built-in utilities for Computer Science students, including Number System converters and Big-O references.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon-wrapper"><i class="fas fa-shield-alt"></i></div>
+                    <h3>Privacy First</h3>
+                    <p>Zero data collection. All calculations happen locally in your browser. Your grades stay on your device.</p>
+                </div>
+            </div>
+        </section>
+
+        <section id="tools-showcase" class="showcase-section scroll-animate">
+            <div class="section-header">
+                <h2>The Toolkit</h2>
+                <p>Curated tools to streamline your workflow.</p>
+            </div>
+            
+            <div class="showcase-container">
+                <!-- Academic Tools -->
+                <div class="showcase-group">
+                    <h3 class="group-title">Academic Core</h3>
+                    <div class="tools-list">
+                        <a href="gpa-calculator.html" class="mini-tool-card">
+                            <div class="mini-icon"><i class="fas fa-calculator"></i></div>
+                            <div class="mini-content">
+                                <h4>GPA Dashboard</h4>
+                                <span>Track CGPA & Trends</span>
+                            </div>
+                            <div class="mini-arrow"><i class="fas fa-chevron-right"></i></div>
+                        </a>
+                        <!-- <a href="focus-zone.html" class="mini-tool-card">
+                            <div class="mini-icon"><i class="fas fa-clock"></i></div>
+                            <div class="mini-content">
+                                <h4>Focus Zone</h4>
+                                <span>Pomodoro & Tasks</span>
+                            </div>
+                            <div class="mini-arrow"><i class="fas fa-chevron-right"></i></div>
+                        </a> -->
+                        <a href="degree-tracker.html" class="mini-tool-card">
+                            <div class="mini-icon"><i class="fas fa-graduation-cap"></i></div>
+                            <div class="mini-content">
+                                <h4>Degree Tracker</h4>
+                                <span>Credit Progress</span>
+                            </div>
+                            <div class="mini-arrow"><i class="fas fa-chevron-right"></i></div>
+                        </a>
+                        <a href="notes-flashcards.html" class="mini-tool-card">
+                            <div class="mini-icon"><i class="fas fa-sticky-note"></i></div>
+                            <div class="mini-content">
+                                <h4>Notes & Flashcards</h4>
+                                <span>Organize your knowledge</span>
+                            </div>
+                            <div class="mini-arrow"><i class="fas fa-chevron-right"></i></div>
+                        </a>
+                        <a href="resource-library.html" class="mini-tool-card">
+                            <div class="mini-icon"><i class="fas fa-book-open"></i></div>
+                            <div class="mini-content">
+                                <h4>Resource Library</h4>
+                                <span>Save & organize links</span>
+                            </div>
+                            <div class="mini-arrow"><i class="fas fa-chevron-right"></i></div>
+                        </a>
                     </div>
                 </div>
-                <p id="landingMessage" class="activity-message">Loading your progress...</p>
-            </div>
-        </section>
 
-        <section class="features-section scroll-animate">
-            <div class="feature-card">
-                <div class="feature-icon">📊</div>
-                <h3>Visualize Your Success</h3>
-                <p>Go beyond numbers. With interactive charts and dashboards, you can see your academic trends and grade distributions at a glance.</p>
+                <!-- CS Tools -->
+                <div class="showcase-group">
+                    <h3 class="group-title">Developer Utilities</h3>
+                    <div class="tools-grid-compact">
+                        <a href="number-system-calculator.html" class="compact-card">
+                            <i class="fas fa-hashtag"></i>
+                            <span>Base Converter</span>
+                        </a>
+                        <a href="bitwise-visualizer.html" class="compact-card">
+                            <i class="far fa-lightbulb"></i>
+                            <span>Bitwise Viz</span>
+                        </a>
+                        <a href="big-o-reference.html" class="compact-card">
+                            <i class="fas fa-project-diagram"></i>
+                            <span>Big-O Ref</span>
+                        </a>
+                    </div>
+                </div>
             </div>
-            <div class="feature-card">
-                <div class="feature-icon">🛠️</div>
-                <h3>Specialized CS Tools</h3>
-                <p>Access a unique set of utilities built for Computer Science students, from number system converters to Big-O references.</p>
-            </div>
-            <div class="feature-card">
-                <div class="feature-icon">🔒</div>
-                <h3>Private & Secure</h3>
-                <p>Your data is your own. All calculations are performed in your browser and saved locally on your device—nothing is sent to a server.</p>
-            </div>
-        </section>
-
-        <section class="tools-category scroll-animate">
-          <h2>Academic Performance</h2>
-          <div class="tools-grid">
-            <a href="gpa-calculator.html" class="tool-card">
-              <div class="tool-icon">🧮</div>
-              <h3>GPA Calculator & Dashboard</h3>
-              <p>Calculate GPA and view a dashboard of your academic performance, including trends and grade distribution.</p>
-            </a>
-            <a href="focus-zone.html" class="tool-card">
-              <div class="tool-icon">⏲️</div>
-              <h3>Focus Zone</h3>
-              <p>Boost your productivity with a customizable Pomodoro timer and a simple task list for your study sessions.</p>
-            </a>
-            <a href="degree-tracker.html" class="tool-card">
-              <div class="tool-icon">🎯</div>
-              <h3>Degree Tracker</h3>
-              <p>Set your target credits and track your completion percentage towards graduation.</p>
-            </a>
-          </div>
-        </section>
-
-        <section class="tools-category scroll-animate">
-          <h2>CS-Oriented Utilities</h2>
-          <div class="tools-grid">
-            <a href="number-system-calculator.html" class="tool-card">
-              <div class="tool-icon">🔢</div>
-              <h3>Number System Calculator</h3>
-              <p>Convert numbers between binary, octal, decimal, and hexadecimal.</p>
-            </a>
-            <a href="bitwise-visualizer.html" class="tool-card">
-              <div class="tool-icon">💡</div>
-              <h3>Bitwise Operation Visualizer</h3>
-              <p>Visualize bitwise operations like AND, OR, XOR, and shifts.</p>
-            </a>
-            <a href="big-o-reference.html" class="tool-card">
-              <div class="tool-icon">O(n)</div>
-              <h3>Big-O Reference Tool</h3>
-              <p>A quick reference for Big-O complexities of common algorithms and data structures.</p>
-            </a>
-          </div>
         </section>
 
         <section class="cta-section scroll-animate">
-            <h2>Ready to Take Control?</h2>
-            <p>Dive into the full academic toolkit and start managing your grades like a pro.</p>
-            <a href="gpa-calculator.html" class="primary-btn">Launch GPA Dashboard</a>
+            <div class="cta-content">
+                <h2>Ready to Optimize Your Studies?</h2>
+                <p>Join thousands of students taking control of their academic performance.</p>
+                <a href="gpa-calculator.html" class="primary-btn glow-btn">Launch Dashboard</a>
+            </div>
         </section>
       </main>
 

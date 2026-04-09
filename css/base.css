@@ -38,6 +38,13 @@ body {
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     transition: background-color 0.3s, color 0.3s;
+    scroll-behavior: smooth;
+}
+
+a {
+    color: inherit; /* Inherit color by default */
+    text-decoration: none; /* Remove underlines */
+    transition: color 0.2s ease, text-decoration 0.2s ease; /* Smooth transitions */
 }
 
 .container {
@@ -130,19 +137,31 @@ footer a {
     font-weight: 500;
 }
 footer a:hover {
+    color: var(--primary-color);
     text-decoration: underline;
 }
 
 .back-link {
-    display: inline-block;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
     margin-bottom: 40px;
     color: var(--text-muted-color);
     text-decoration: none;
     font-weight: 500;
-    transition: color 0.2s;
+    transition: all 0.2s;
+    padding: 8px 16px;
+    border-radius: 20px;
+    background: var(--bg-secondary-color);
+    border: 1px solid var(--border-color);
+    font-size: 0.9rem;
 }
 .back-link:hover {
     color: var(--primary-color);
+    border-color: var(--primary-color);
+    background: var(--bg-color);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 10px var(--shadow-color);
 }
 
 /* Modal Styles */
@@ -277,6 +296,10 @@ footer a:hover {
 .scroll-animate.is-visible {
     opacity: 1;
     transform: translateY(0);
+}
+
+#pageContainer.mobile-nav-open .mobile-menu {
+    transform: translateX(0);
 }
 
 /* Responsive */

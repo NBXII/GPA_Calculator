@@ -27,6 +27,18 @@ document.addEventListener('DOMContentLoaded', function () {
     // Apply theme immediately
     applyTheme(localStorage.getItem('theme') || 'light');
 
+    // --- Smooth Scrolling for Anchor Links ---
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener('click', function (e) {
+            e.preventDefault();
+            const targetId = this.getAttribute('href');
+            const targetElement = document.querySelector(targetId);
+            if (targetElement) {
+                targetElement.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }
+        });
+    });
+
     function showToast(message, undoCallback = null) {
         const toastContainer = document.getElementById('toastContainer');
         if (!toastContainer) return; // Don't fail if toast container not on page
@@ -94,6 +106,7 @@ document.addEventListener('DOMContentLoaded', function () {
         'C+': 2.0, 'C': 1.5, 'C-': 1.0,
         'D+': 1.0, 'D': 1.0, 'F': 0.0
     };
+    const yearOrder = ['Freshman', 'Sophomore', 'Junior', 'Senior'];
 
     // --- Landing Page Enhancements ---
     const exploreBtn = document.getElementById('exploreBtn');
@@ -102,6 +115,15 @@ document.addEventListener('DOMContentLoaded', function () {
             e.preventDefault();
             const targetEl = document.getElementById('main-content-start');
             if (targetEl) targetEl.scrollIntoView({ behavior: 'smooth' });
+        });
+    }
+
+    // --- Hero Parallax Effect ---
+    const heroBg = document.querySelector('.hero-bg-image');
+    if (heroBg) {
+        window.addEventListener('scroll', () => {
+            const scrolled = window.scrollY;
+            heroBg.style.transform = `translateY(${scrolled * 0.4}px)`;
         });
     }
 
@@ -173,14 +195,21 @@ document.addEventListener('DOMContentLoaded', function () {
     let gradePointMap = { ...defaultGradePointMap };
 
         // --- Data Persistence ---
-    function saveAcademicData() {
-        // Before saving, derive the flat allCourses array
+    function flattenAcademicData() {
         const flatCourses = [];
-        Object.values(academicData).forEach(year => {
-            year.semesters.forEach(semester => {
-                flatCourses.push(...semester.courses);
-            });
-        });
+        for (const yearName of yearOrder) {
+            const year = academicData[yearName];
+            if (year && year.semesters) {
+                year.semesters.forEach(semester => {
+                    flatCourses.push(...semester.courses);
+                });
+            }
+        }
+        return flatCourses;
+    }
+
+    function saveAcademicData() {
+        const flatCourses = flattenAcademicData();
         localStorage.setItem('academicData', JSON.stringify(academicData));
         localStorage.setItem('allCourses', JSON.stringify(flatCourses)); // Save flat array for other pages
     }
@@ -188,9 +217,9 @@ document.addEventListener('DOMContentLoaded', function () {
     // Helper to sync flat index to hierarchical data
     function findCourseLocation(flatIndex) {
         let count = 0;
-        // Must match the traversal order in saveAcademicData
-        const years = Object.values(academicData);
-        for (const year of years) {
+        for (const yearName of yearOrder) {
+            const year = academicData[yearName];
+            if (!year) continue;
             for (const semester of year.semesters) {
                 if (flatIndex < count + semester.courses.length) {
                     return { semester: semester, index: flatIndex - count };
@@ -290,10 +319,14 @@ document.addEventListener('DOMContentLoaded', function () {
             const semesterBlock = document.createElement('div');
             semesterBlock.className = 'semester-block';
             semesterBlock.innerHTML = `
-                <div class="semester-header">
-                    <h3>${semester.title || `Semester ${semesterIndex + 1}`}</h3>
+                <div class="semester-header" onclick="this.parentElement.classList.toggle('collapsed')">
+                    <div class="header-left">
+                        <i class="fas fa-chevron-down toggle-icon"></i>
+                        <h3>${semester.title || `Semester ${semesterIndex + 1}`}</h3>
+                    </div>
                     <div class="semester-gpa-display">GPA: <span id="sem-gpa-${semesterIndex}">${semester.gpa.toFixed(2)}</span></div>
                 </div>
+                <div class="semester-body">
                 <table class="input-table" data-semester-index="${semesterIndex}">
                     <thead>
                         <tr><th>Course Name</th><th>Grade</th><th>Credits</th><th></th></tr>
@@ -302,6 +335,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 </table>
                 <div class="input-actions">
                     <button type="button" class="icon-btn add-sem-course-btn"><span>+</span> Add Course</button>
+                </div>
                 </div>
             `;
             semestersContainer.appendChild(semesterBlock);
@@ -421,11 +455,7 @@ document.addEventListener('DOMContentLoaded', function () {
         saveAcademicData();
         
         // Update in-memory allCourses and Dashboard
-        allCourses = [];
-        Object.values(academicData).forEach(y => {
-            y.semesters.forEach(s => allCourses.push(...s.courses));
-        });
-        
+        allCourses = flattenAcademicData();
         updateDashboard();
     }
 
@@ -482,11 +512,7 @@ document.addEventListener('DOMContentLoaded', function () {
         saveAcademicData();
         
         // Flatten all courses from all years for cumulative display
-        allCourses = [];
-        Object.values(academicData).forEach(y => {
-            y.semesters.forEach(s => allCourses.push(...s.courses));
-        });
-
+        allCourses = flattenAcademicData();
         updateDashboard(); // This calculates cumulative GPA and updates UI
         showToast(`Academic year updated and CGPA calculated!`);
         generateSemesterUI(); // Refresh UI to show saved state
@@ -685,12 +711,7 @@ document.addEventListener('DOMContentLoaded', function () {
             if (loc) {
                 loc.semester.courses[loc.index] = { name, grade: gradeLetter, gradePoint, credit };
                 saveAcademicData();
-                
-                // Refresh allCourses
-                allCourses = [];
-                Object.values(academicData).forEach(y => {
-                    y.semesters.forEach(s => allCourses.push(...s.courses));
-                });
+                allCourses = flattenAcademicData();
             }
             updateDashboard(); // Recalculate everything after an edit
         } else {
@@ -723,12 +744,7 @@ document.addEventListener('DOMContentLoaded', function () {
                     };
                     loc.semester.courses.splice(loc.index, 1);
 
-                    // Refresh allCourses
-                    allCourses = [];
-                    Object.values(academicData).forEach(y => {
-                        y.semesters.forEach(s => allCourses.push(...s.courses));
-                    });
-                    
+                    allCourses = flattenAcademicData();
                     // If Year Setup is visible, refresh it to reflect deletion
                     const currentYear = academicYearSelect.value;
                     if (academicData[currentYear] && academicData[currentYear].semesters.includes(loc.semester)) {
@@ -754,13 +770,7 @@ document.addEventListener('DOMContentLoaded', function () {
             // Restore to specific semester
             recentlyDeleted.semester.courses.splice(recentlyDeleted.semIndex, 0, recentlyDeleted.course);
             saveAcademicData();
-            
-            // Refresh allCourses
-            allCourses = [];
-            Object.values(academicData).forEach(y => {
-                y.semesters.forEach(s => allCourses.push(...s.courses));
-            });
-
+            allCourses = flattenAcademicData();
             recentlyDeleted = null;
             generateSemesterUI(); // Refresh UI
             updateDashboard();
@@ -1350,11 +1360,11 @@ document.addEventListener('DOMContentLoaded', function () {
             });
             const gpa = totalCredits > 0 ? (totalPoints / totalCredits) : 0.0;
 
-            let status = { class: 'status-bad', icon: '⚠️', title: 'Academic Warning', desc: 'Your GPA is below 2.0. Focus on improvement.' };
+            let status = { class: 'status-bad', icon: '<i class="fas fa-exclamation-triangle"></i>', title: 'Academic Warning', desc: 'Your GPA is below 2.0. Focus on improvement.' };
             if (gpa >= 3.0) {
-                status = { class: 'status-good', icon: '🌟', title: 'On Track', desc: 'You are progressing well! Keep it up.' };
+                status = { class: 'status-good', icon: '<i class="fas fa-check-circle"></i>', title: 'On Track', desc: 'You are progressing well! Keep it up.' };
             } else if (gpa >= 2.0) {
-                status = { class: 'status-average', icon: '⚖️', title: 'Satisfactory', desc: 'You are meeting requirements, but aim higher.' };
+                status = { class: 'status-average', icon: '<i class="fas fa-balance-scale"></i>', title: 'Satisfactory', desc: 'You are meeting requirements, but aim higher.' };
             }
 
             let statusCard = document.getElementById('academicStatusCard');
@@ -1471,6 +1481,520 @@ document.addEventListener('DOMContentLoaded', function () {
         });
 
         loadTracker();
+    }
+
+    // --- Notes & Flashcards Logic ---
+    const notesFlashcardsContainer = document.getElementById('notesFlashcardsContainer');
+    if (notesFlashcardsContainer) {
+        // --- Notes Elements ---
+        const addNoteBtn = document.getElementById('addNoteBtn');
+        const notesList = document.getElementById('notesList');
+        const emptyNotesState = document.getElementById('emptyNotesState');
+        const notesSearch = document.getElementById('notesSearch');
+        const noteModal = document.getElementById('noteModal');
+        const noteModalClose = document.getElementById('noteModalClose');
+        const noteModalTitle = document.getElementById('noteModalTitle');
+        const noteForm = document.getElementById('noteForm');
+        const noteIdInput = document.getElementById('noteId');
+        const noteTitleInput = document.getElementById('noteTitle');
+        const noteContentInput = document.getElementById('noteContent');
+        const deleteNoteBtn = document.getElementById('deleteNoteBtn');
+
+        // --- Flashcards Elements ---
+        const addFlashcardSetBtn = document.getElementById('addFlashcardSetBtn');
+        const flashcardSetsList = document.getElementById('flashcardSetsList');
+        const emptyFlashcardsState = document.getElementById('emptyFlashcardsState');
+        const flashcardSetModal = document.getElementById('flashcardSetModal');
+        const flashcardSetModalClose = document.getElementById('flashcardSetModalClose');
+        const flashcardSetModalTitle = document.getElementById('flashcardSetModalTitle');
+        const flashcardSetForm = document.getElementById('flashcardSetForm');
+        const flashcardSetIdInput = document.getElementById('flashcardSetId');
+        const flashcardSetNameInput = document.getElementById('flashcardSetName');
+        const deleteFlashcardSetBtn = document.getElementById('deleteFlashcardSetBtn');
+
+        const flashcardEditorModal = document.getElementById('flashcardEditorModal');
+        const flashcardEditorModalClose = document.getElementById('flashcardEditorModalClose');
+        const flashcardEditorModalTitle = document.getElementById('flashcardEditorModalTitle');
+        const flashcardEditorSubtitle = document.getElementById('flashcardEditorSubtitle');
+        const currentFlashcardsDiv = document.getElementById('currentFlashcards');
+        const addFlashcardBtn = document.getElementById('addFlashcardBtn');
+        const saveFlashcardsBtn = document.getElementById('saveFlashcardsBtn');
+
+        const flashcardReviewModal = document.getElementById('flashcardReviewModal');
+        const flashcardReviewModalClose = document.getElementById('flashcardReviewModalClose');
+        const flashcardReviewTitle = document.getElementById('flashcardReviewTitle');
+        const flashcardReviewSubtitle = document.getElementById('flashcardReviewSubtitle');
+        const flashcardDisplay = document.getElementById('flashcardDisplay');
+        const reviewCardFront = document.getElementById('reviewCardFront');
+        const reviewCardBack = document.getElementById('reviewCardBack');
+        const flipCardBtn = document.getElementById('flipCardBtn');
+        const srsControls = document.getElementById('srsControls');
+        const reviewCompleteMessage = document.getElementById('reviewCompleteMessage');
+
+        // --- State ---
+        let notes = JSON.parse(localStorage.getItem('notes')) || [];
+        let flashcardSets = JSON.parse(localStorage.getItem('flashcardSets')) || [];
+        let currentReviewSet = null;
+        let currentReviewIndex = 0;
+        let isFlipped = false;
+
+        // --- Notes Functions ---
+        function saveNotes() {
+            localStorage.setItem('notes', JSON.stringify(notes));
+            renderNotes();
+        }
+
+        function renderNotes(searchTerm = '') {
+            notesList.innerHTML = '';
+            const filteredNotes = notes.filter(note => 
+                note.title.toLowerCase().includes(searchTerm.toLowerCase()) || 
+                note.content.toLowerCase().includes(searchTerm.toLowerCase())
+            );
+
+            if (filteredNotes.length === 0) {
+                emptyNotesState.style.display = 'block';
+            } else {
+                emptyNotesState.style.display = 'none';
+                filteredNotes.forEach(note => {
+                    const noteCard = document.createElement('div');
+                    noteCard.className = 'note-card';
+                    noteCard.dataset.id = note.id;
+                    noteCard.innerHTML = `
+                        <h3>${note.title}</h3>
+                        <p>${note.content.substring(0, 150)}${note.content.length > 150 ? '...' : ''}</p>
+                        <span class="note-card-date">Last updated: ${new Date(note.timestamp).toLocaleDateString()}</span>
+                    `;
+                    noteCard.addEventListener('click', () => openNoteModal(note.id));
+                    notesList.appendChild(noteCard);
+                });
+            }
+        }
+
+        function openNoteModal(id = null) {
+            noteForm.reset();
+            deleteNoteBtn.style.display = 'none';
+            if (id) {
+                const note = notes.find(n => n.id === id);
+                if (note) {
+                    noteModalTitle.textContent = 'Edit Note';
+                    noteIdInput.value = note.id;
+                    noteTitleInput.value = note.title;
+                    noteContentInput.value = note.content;
+                    deleteNoteBtn.style.display = 'inline-block';
+                }
+            } else {
+                noteModalTitle.textContent = 'Add New Note';
+                noteIdInput.value = '';
+            }
+            noteModal.style.display = 'block';
+        }
+
+        function closeNoteModal() {
+            noteModal.style.display = 'none';
+        }
+
+        noteForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            const id = noteIdInput.value || Date.now().toString();
+            const title = noteTitleInput.value.trim();
+            const content = noteContentInput.value.trim();
+            const timestamp = new Date().toISOString();
+
+            if (!title || !content) {
+                showToast('Title and content cannot be empty.', null);
+                return;
+            }
+
+            const existingIndex = notes.findIndex(n => n.id === id);
+            if (existingIndex > -1) {
+                notes[existingIndex] = { id, title, content, timestamp };
+            } else {
+                notes.push({ id, title, content, timestamp });
+            }
+            saveNotes();
+            closeNoteModal();
+            showToast('Note saved!');
+        });
+
+        deleteNoteBtn.addEventListener('click', () => {
+            if (confirm('Are you sure you want to delete this note?')) {
+                notes = notes.filter(n => n.id !== noteIdInput.value);
+                saveNotes();
+                closeNoteModal();
+                showToast('Note deleted.');
+            }
+        });
+
+        addNoteBtn.addEventListener('click', () => openNoteModal());
+        noteModalClose.addEventListener('click', closeNoteModal);
+
+        // Search listener
+        if (notesSearch) {
+            notesSearch.addEventListener('input', (e) => renderNotes(e.target.value));
+        }
+
+        // --- Flashcards Functions ---
+        function saveFlashcardSets() {
+            localStorage.setItem('flashcardSets', JSON.stringify(flashcardSets));
+            renderFlashcardSets();
+        }
+
+        function renderFlashcardSets() {
+            flashcardSetsList.innerHTML = '';
+            if (flashcardSets.length === 0) {
+                emptyFlashcardsState.style.display = 'block';
+            } else {
+                emptyFlashcardsState.style.display = 'none';
+                flashcardSets.forEach(set => {
+                    const setCard = document.createElement('div');
+                    setCard.className = 'flashcard-set-card';
+                    setCard.dataset.id = set.id;
+                    setCard.innerHTML = `
+                        <h3>${set.name}</h3>
+                        <p>${set.cards.length} cards</p>
+                        <div class="card-actions">
+                            <button type="button" class="primary-btn edit-set-btn"><i class="fas fa-edit"></i> Edit Cards</button>
+                            <button type="button" class="secondary-btn review-set-btn" ${set.cards.length === 0 ? 'disabled' : ''}><i class="fas fa-eye"></i> Review</button>
+                        </div>
+                    `;
+                    setCard.querySelector('.edit-set-btn').addEventListener('click', (e) => {
+                        e.stopPropagation(); // Prevent card click from triggering
+                        openFlashcardEditorModal(set.id);
+                    });
+                    setCard.querySelector('.review-set-btn').addEventListener('click', (e) => {
+                        e.stopPropagation();
+                        startFlashcardReview(set.id);
+                    });
+                    flashcardSetsList.appendChild(setCard);
+                });
+            }
+        }
+
+        function openFlashcardSetModal(id = null) {
+            flashcardSetForm.reset();
+            deleteFlashcardSetBtn.style.display = 'none';
+            if (id) {
+                const set = flashcardSets.find(s => s.id === id);
+                if (set) {
+                    flashcardSetModalTitle.textContent = 'Edit Flashcard Set';
+                    flashcardSetIdInput.value = set.id;
+                    flashcardSetNameInput.value = set.name;
+                    deleteFlashcardSetBtn.style.display = 'inline-block';
+                }
+            } else {
+                flashcardSetModalTitle.textContent = 'Add New Flashcard Set';
+                flashcardSetIdInput.value = '';
+            }
+            flashcardSetModal.style.display = 'block';
+        }
+
+        function closeFlashcardSetModal() {
+            flashcardSetModal.style.display = 'none';
+        }
+
+        flashcardSetForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            const id = flashcardSetIdInput.value || Date.now().toString();
+            const name = flashcardSetNameInput.value.trim();
+
+            if (!name) {
+                showToast('Set name cannot be empty.', null);
+                return;
+            }
+
+            const existingIndex = flashcardSets.findIndex(s => s.id === id);
+            if (existingIndex > -1) {
+                flashcardSets[existingIndex].name = name;
+            } else {
+                flashcardSets.push({ id, name, cards: [] });
+            }
+            saveFlashcardSets();
+            closeFlashcardSetModal();
+            showToast('Flashcard set saved!');
+        });
+
+        deleteFlashcardSetBtn.addEventListener('click', () => {
+            if (confirm('Are you sure you want to delete this flashcard set and all its cards?')) {
+                flashcardSets = flashcardSets.filter(s => s.id !== flashcardSetIdInput.value);
+                saveFlashcardSets();
+                closeFlashcardSetModal();
+                showToast('Flashcard set deleted.');
+            }
+        });
+
+        addFlashcardSetBtn.addEventListener('click', () => openFlashcardSetModal());
+        flashcardSetModalClose.addEventListener('click', closeFlashcardSetModal);
+
+        // --- Flashcard Editor Functions ---
+        let editingFlashcardSetId = null;
+
+        function openFlashcardEditorModal(setId) {
+            editingFlashcardSetId = setId;
+            const set = flashcardSets.find(s => s.id === setId);
+            if (!set) return;
+
+            flashcardEditorModalTitle.textContent = `Edit Cards for "${set.name}"`;
+            flashcardEditorSubtitle.textContent = `Total cards: ${set.cards.length}`;
+            renderFlashcardsInEditor(set.cards);
+            flashcardEditorModal.style.display = 'block';
+        }
+
+        function closeFlashcardEditorModal() {
+            flashcardEditorModal.style.display = 'none';
+            editingFlashcardSetId = null;
+            renderFlashcardSets(); // Refresh set list in case card count changed
+        }
+
+        function renderFlashcardsInEditor(cards) {
+            currentFlashcardsDiv.innerHTML = '';
+            cards.forEach((card, index) => {
+                addFlashcardInputRow(card.front, card.back, index);
+            });
+            if (cards.length === 0) {
+                addFlashcardInputRow('', ''); // Add an empty row if no cards
+            }
+        }
+
+        function addFlashcardInputRow(front = '', back = '', index = -1) {
+            const row = document.createElement('div');
+            row.className = 'flashcard-editor-row';
+            row.innerHTML = `
+                <input type="text" class="flashcard-front-input" placeholder="Front (Question)" value="${front}">
+                <input type="text" class="flashcard-back-input" placeholder="Back (Answer)" value="${back}">
+                <button type="button" class="icon-btn danger remove-flashcard-row"><i class="fas fa-trash"></i></button>
+            `;
+            row.querySelector('.remove-flashcard-row').addEventListener('click', () => row.remove());
+            currentFlashcardsDiv.appendChild(row);
+        }
+
+        addFlashcardBtn.addEventListener('click', () => addFlashcardInputRow());
+
+        saveFlashcardsBtn.addEventListener('click', () => {
+            const set = flashcardSets.find(s => s.id === editingFlashcardSetId);
+            if (!set) return;
+
+            const newCards = [];
+            currentFlashcardsDiv.querySelectorAll('.flashcard-editor-row').forEach(row => {
+                const front = row.querySelector('.flashcard-front-input').value.trim();
+                const back = row.querySelector('.flashcard-back-input').value.trim();
+                if (front && back) {
+                    newCards.push({ front, back });
+                }
+            });
+            set.cards = newCards;
+            saveFlashcardSets();
+            closeFlashcardEditorModal();
+            showToast('Flashcards updated!');
+        });
+
+        flashcardEditorModalClose.addEventListener('click', closeFlashcardEditorModal);
+
+        // --- Flashcard Review Functions ---
+        function startFlashcardReview(setId) {
+            currentReviewSet = flashcardSets.find(s => s.id === setId);
+            if (!currentReviewSet || currentReviewSet.cards.length === 0) {
+                showToast('This set has no cards to review.', null);
+                return;
+            }
+
+            currentReviewIndex = 0;
+            isFlipped = false;
+            flashcardReviewTitle.textContent = `Reviewing: ${currentReviewSet.name}`;
+            flashcardReviewSubtitle.textContent = `Card ${currentReviewIndex + 1} of ${currentReviewSet.cards.length}`;
+            reviewCompleteMessage.style.display = 'none';
+            flashcardDisplay.style.display = 'block';
+            flipCardBtn.style.display = 'inline-block';
+            srsControls.style.display = 'none';
+
+            renderCurrentFlashcard();
+            flashcardReviewModal.style.display = 'block';
+        }
+
+        function renderCurrentFlashcard() {
+            if (!currentReviewSet || currentReviewIndex >= currentReviewSet.cards.length) {
+                flashcardDisplay.style.display = 'none';
+                flipCardBtn.style.display = 'none';
+                srsControls.style.display = 'none';
+                reviewCompleteMessage.style.display = 'block';
+                return;
+            }
+
+            const card = currentReviewSet.cards[currentReviewIndex];
+            reviewCardFront.textContent = card.front;
+            reviewCardBack.textContent = card.back;
+            flashcardDisplay.classList.remove('flipped');
+            isFlipped = false;
+            flashcardReviewSubtitle.textContent = `Card ${currentReviewIndex + 1} of ${currentReviewSet.cards.length}`;
+        }
+
+        function flipFlashcard() {
+            flashcardDisplay.classList.toggle('flipped');
+            isFlipped = !isFlipped;
+        }
+
+        function nextFlashcard() {
+            currentReviewIndex++;
+            renderCurrentFlashcard();
+        }
+
+        function closeFlashcardReviewModal() {
+            flashcardReviewModal.style.display = 'none';
+            currentReviewSet = null;
+        }
+
+        flipCardBtn.addEventListener('click', flipFlashcard);
+        nextCardBtn.addEventListener('click', nextFlashcard);
+        flashcardReviewModalClose.addEventListener('click', closeFlashcardReviewModal);
+
+        // Initial render on page load
+        if (notesList) renderNotes();
+        if (flashcardSetsList) renderFlashcardSets();
+
+        // Close modals when clicking outside (only if elements exist)
+        window.addEventListener('click', function (e) {
+            if (e.target === noteModal) closeNoteModal();
+            if (e.target === flashcardSetModal) closeFlashcardSetModal();
+            if (e.target === flashcardEditorModal) closeFlashcardEditorModal();
+            if (e.target === flashcardReviewModal) closeFlashcardReviewModal();
+        });
+    }
+
+    // --- Resource Library Logic ---
+    const resourceLibraryContainer = document.getElementById('resourceLibraryContainer');
+    if (resourceLibraryContainer) {
+        // Elements
+        const addResourceBtn = document.getElementById('addResourceBtn');
+        const resourcesList = document.getElementById('resourcesList');
+        const emptyResourcesState = document.getElementById('emptyResourcesState');
+        const resourceSearch = document.getElementById('resourceSearch');
+        const resourceModal = document.getElementById('resourceModal');
+        const resourceModalClose = document.getElementById('resourceModalClose');
+        const resourceModalTitle = document.getElementById('resourceModalTitle');
+        const resourceForm = document.getElementById('resourceForm');
+        const resourceIdInput = document.getElementById('resourceId');
+        const resourceTitleInput = document.getElementById('resourceTitle');
+        const resourceUrlInput = document.getElementById('resourceUrl');
+        const resourceDescriptionInput = document.getElementById('resourceDescription');
+        const resourceTagsInput = document.getElementById('resourceTags');
+        const deleteResourceBtn = document.getElementById('deleteResourceBtn');
+
+        // State
+        let resources = JSON.parse(localStorage.getItem('resources')) || [];
+
+        // --- Resource Functions ---
+        function saveResources() {
+            localStorage.setItem('resources', JSON.stringify(resources));
+            renderResources();
+        }
+
+        function renderResources(searchTerm = '') {
+            resourcesList.innerHTML = '';
+            const lowerCaseSearchTerm = searchTerm.toLowerCase();
+            const filteredResources = resources.filter(resource =>
+                resource.title.toLowerCase().includes(lowerCaseSearchTerm) ||
+                resource.description.toLowerCase().includes(lowerCaseSearchTerm) ||
+                resource.tags.some(tag => tag.toLowerCase().includes(lowerCaseSearchTerm))
+            );
+
+            if (filteredResources.length === 0) {
+                emptyResourcesState.style.display = 'block';
+            } else {
+                emptyResourcesState.style.display = 'none';
+                filteredResources.forEach(resource => {
+                    const resourceCard = document.createElement('div');
+                    resourceCard.className = 'resource-card';
+                    resourceCard.dataset.id = resource.id;
+                    const tagsHtml = resource.tags.map(tag => `<span>${tag}</span>`).join('');
+                    resourceCard.innerHTML = `
+                        <h3>${resource.title}</h3>
+                        <p>${resource.description.substring(0, 150)}${resource.description.length > 150 ? '...' : ''}</p>
+                        <a href="${resource.url}" target="_blank" rel="noopener noreferrer" class="resource-link">Go to Resource <i class="fas fa-external-link-alt"></i></a>
+                        <div class="resource-tags">${tagsHtml}</div>
+                    `;
+                    resourceCard.addEventListener('click', (e) => {
+                        // Only open modal if not clicking the link
+                        if (!e.target.closest('.resource-link')) {
+                            openResourceModal(resource.id);
+                        }
+                    });
+                    resourcesList.appendChild(resourceCard);
+                });
+            }
+        }
+
+        function openResourceModal(id = null) {
+            resourceForm.reset();
+            deleteResourceBtn.style.display = 'none';
+            if (id) {
+                const resource = resources.find(r => r.id === id);
+                if (resource) {
+                    resourceModalTitle.textContent = 'Edit Resource';
+                    resourceIdInput.value = resource.id;
+                    resourceTitleInput.value = resource.title;
+                    resourceUrlInput.value = resource.url;
+                    resourceDescriptionInput.value = resource.description;
+                    resourceTagsInput.value = resource.tags.join(', ');
+                    deleteResourceBtn.style.display = 'inline-block';
+                }
+            } else {
+                resourceModalTitle.textContent = 'Add New Resource';
+                resourceIdInput.value = '';
+            }
+            resourceModal.style.display = 'block';
+        }
+
+        function closeResourceModal() {
+            resourceModal.style.display = 'none';
+        }
+
+        resourceForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            const id = resourceIdInput.value || Date.now().toString();
+            const title = resourceTitleInput.value.trim();
+            const url = resourceUrlInput.value.trim();
+            const description = resourceDescriptionInput.value.trim();
+            const tags = resourceTagsInput.value.split(',').map(tag => tag.trim()).filter(tag => tag !== '');
+
+            if (!title || !url) {
+                showToast('Title and URL cannot be empty.', null);
+                return;
+            }
+
+            const existingIndex = resources.findIndex(r => r.id === id);
+            if (existingIndex > -1) {
+                resources[existingIndex] = { id, title, url, description, tags };
+            } else {
+                resources.push({ id, title, url, description, tags });
+            }
+            saveResources();
+            closeResourceModal();
+            showToast('Resource saved!');
+        });
+
+        deleteResourceBtn.addEventListener('click', () => {
+            if (confirm('Are you sure you want to delete this resource?')) {
+                resources = resources.filter(r => r.id !== resourceIdInput.value);
+                saveResources();
+                closeResourceModal();
+                showToast('Resource deleted.');
+            }
+        });
+
+        addResourceBtn.addEventListener('click', () => openResourceModal());
+        resourceModalClose.addEventListener('click', closeResourceModal);
+
+        // Search listener
+        if (resourceSearch) {
+            resourceSearch.addEventListener('input', (e) => renderResources(e.target.value));
+        }
+
+        // Initial render on page load
+        renderResources();
+
+        // Close modal when clicking outside
+        window.addEventListener('click', function (e) {
+            if (e.target === resourceModal) closeResourceModal();
+        });
     }
 
     // --- Number System Calculator Logic ---
@@ -1946,4 +2470,28 @@ document.addEventListener('DOMContentLoaded', function () {
 
         animatedElements.forEach(el => observer.observe(el));
     }
+
+    // --- Hamburger Menu Toggle ---
+    const hamburgerBtn = document.getElementById('hamburgerBtn');
+    if (hamburgerBtn) {
+        hamburgerBtn.addEventListener('click', () => {
+            const container = document.getElementById('pageContainer');
+            container.classList.toggle('mobile-nav-open');
+        });
+    }
+
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
 });

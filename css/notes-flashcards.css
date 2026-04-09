@@ -1,0 +1,319 @@
+/* Styles for Notes & Flashcards Page */
+
+main {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 40px;
+}
+
+.notes-section, .flashcards-section {
+    background: var(--bg-secondary-color);
+    padding: 30px;
+    border-radius: 16px;
+    border: 1px solid var(--border-color-light);
+    box-shadow: 0 8px 30px var(--shadow-color);
+}
+
+.section-header-inline {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 24px;
+    padding-bottom: 16px;
+    border-bottom: 1px solid var(--border-color);
+}
+.section-header-inline h2 {
+    margin: 0;
+    font-size: 1.5rem;
+    color: var(--text-color);
+}
+.header-main {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    flex-grow: 1;
+}
+.search-input {
+    padding: 8px 16px;
+    border-radius: 20px;
+    border: 1px solid var(--border-color);
+    background: var(--bg-color);
+    color: var(--text-color);
+    width: 250px;
+    transition: all 0.3s ease;
+}
+.search-input:focus {
+    border-color: var(--primary-color);
+    width: 300px;
+}
+
+.grid-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 20px;
+}
+
+/* --- Note Cards --- */
+.note-card {
+    background: var(--bg-color);
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
+    padding: 20px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    cursor: pointer;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    min-height: 180px;
+}
+.note-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+}
+.note-card h3 {
+    margin-top: 0;
+    margin-bottom: 10px;
+    font-size: 1.2rem;
+    color: var(--primary-color);
+    word-break: break-word;
+}
+.note-card p {
+    font-size: 0.95rem;
+    color: var(--text-muted-color);
+    line-height: 1.5;
+    flex-grow: 1;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: -webkit-box;
+    -webkit-line-clamp: 4; /* Limit to 4 lines */
+    -webkit-box-orient: vertical;
+}
+.note-card-date {
+    font-size: 0.8rem;
+    color: var(--text-muted-color);
+    margin-top: 15px;
+    text-align: right;
+}
+
+/* --- Flashcard Set Cards --- */
+.flashcard-set-card {
+    background: var(--bg-color);
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
+    padding: 20px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    min-height: 150px;
+}
+.flashcard-set-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+}
+.flashcard-set-card h3 {
+    margin-top: 0;
+    margin-bottom: 10px;
+    font-size: 1.2rem;
+    color: var(--primary-color);
+    word-break: break-word;
+}
+.flashcard-set-card p {
+    font-size: 0.95rem;
+    color: var(--text-muted-color);
+    margin-bottom: 15px;
+}
+.flashcard-set-card .card-actions {
+    display: flex;
+    gap: 10px;
+    margin-top: auto;
+}
+.flashcard-set-card .card-actions .primary-btn,
+.flashcard-set-card .card-actions .secondary-btn {
+    flex: 1;
+    padding: 8px 12px;
+    font-size: 0.9rem;
+    margin: 0;
+}
+
+/* --- Modals --- */
+.modal-content.large-modal {
+    max-width: 800px;
+}
+
+.form-group {
+    margin-bottom: 16px;
+}
+.form-group label {
+    display: block;
+    font-weight: 500;
+    margin-bottom: 6px;
+    color: var(--text-muted-color);
+}
+.form-group input[type="text"],
+.form-group textarea {
+    width: 100%;
+    padding: 10px 12px;
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    font-size: 1rem;
+    background-color: var(--bg-color);
+    color: var(--text-color);
+    box-sizing: border-box;
+}
+.form-group textarea {
+    resize: vertical;
+}
+
+.form-actions {
+    margin-top: 24px;
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+}
+
+/* --- Flashcard Editor --- */
+.flashcard-editor-list {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    max-height: 400px;
+    overflow-y: auto;
+    padding-right: 10px; /* For scrollbar */
+}
+.flashcard-editor-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr auto;
+    gap: 10px;
+    background: var(--bg-color);
+    border: 1px solid var(--border-color-light);
+    border-radius: 8px;
+    padding: 10px;
+    align-items: center;
+}
+.flashcard-editor-row input {
+    width: 100%;
+    padding: 8px;
+    border: 1px solid var(--border-color);
+    border-radius: 6px;
+    background: var(--bg-secondary-color);
+    color: var(--text-color);
+}
+.flashcard-editor-row .icon-btn {
+    margin: 0;
+}
+
+/* --- Flashcard Review --- */
+.flashcard-review-card {
+    position: relative;
+    width: 100%;
+    max-width: 400px;
+    height: 250px;
+    margin: 30px auto;
+    perspective: 1000px;
+}
+.flashcard-front, .flashcard-back {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    backface-visibility: hidden;
+    transition: transform 0.6s cubic-bezier(0.4, 0.2, 0.2, 1);
+    border-radius: 15px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 20px;
+    box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+    background: var(--bg-color);
+    border: 1px solid var(--border-color);
+    font-size: 1.3rem;
+    font-weight: 600;
+    color: var(--text-color);
+}
+.flashcard-front {
+    transform: rotateY(0deg);
+    z-index: 2;
+}
+.flashcard-back {
+    transform: rotateY(180deg);
+    background: var(--primary-color);
+    color: #fff;
+}
+.flashcard-review-card.flipped .flashcard-front {
+    transform: rotateY(-180deg);
+}
+.flashcard-review-card.flipped .flashcard-back {
+    transform: rotateY(0deg);
+}
+
+.review-controls {
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+    margin-top: 30px;
+}
+.review-feedback {
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+    margin-top: 20px;
+}
+.review-feedback .primary-btn, .review-feedback .secondary-btn {
+    padding: 10px 20px;
+    font-size: 1rem;
+    margin: 0;
+}
+
+/* Empty State */
+.empty-state {
+    text-align: center;
+    padding: 40px 20px;
+    color: var(--text-muted-color);
+    font-size: 1.1rem;
+    border: 2px dashed var(--border-color-light);
+    border-radius: 12px;
+    margin-top: 20px;
+}
+.empty-state i {
+    font-size: 3rem;
+    margin-bottom: 15px;
+    color: var(--primary-color);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    main {
+        grid-template-columns: 1fr;
+    }
+    .flashcard-editor-row {
+        grid-template-columns: 1fr 1fr auto; /* Adjust for smaller screens */
+    }
+}
+
+@media (max-width: 480px) {
+    .grid-list {
+        grid-template-columns: 1fr;
+    }
+    .flashcard-editor-row {
+        grid-template-columns: 1fr auto; /* Stack front/back inputs */
+        row-gap: 8px;
+    }
+    .flashcard-editor-row input {
+        grid-column: span 2;
+    }
+    .flashcard-editor-row .icon-btn {
+        grid-column: 2 / 3;
+        grid-row: 1 / 2;
+    }
+    .flashcard-review-card {
+        height: 200px;
+        font-size: 1.1rem;
+    }
+    .review-controls {
+        flex-direction: column;
+        gap: 10px;
+    }
+}

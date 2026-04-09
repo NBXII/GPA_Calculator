@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Notes & Flashcards - UniMetrics</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" integrity="sha512-9usAa10IRO0HhonpyAIVpjrylPvoDwiPUiKdWk5t3PyolY1cOd4DSE0Ga+ri4AuTroPR5aQvXU9xC6qOPnzFeg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link rel="stylesheet" href="css/base.css" />
+    <link rel="stylesheet" href="css/notes-flashcards.css" />
+    <link rel="icon" href="assets/Logo.jpg" type="image/x-icon" />
+</head>
+<body>
+    <div class="container">
+        <a href="index.html" class="back-link">← Back to Home</a>
+        <header>
+            <h1>Notes & Flashcards</h1>
+            <p class="subtitle">
+                Capture, organize, and master your study material.
+            </p>
+            <button id="themeToggleBtn" class="theme-btn">🌙</button>
+        </header>
+
+        <main id="notesFlashcardsContainer">
+            <section class="notes-section">
+                <div class="section-header-inline">
+                    <div class="header-main">
+                        <h2>Your Notes</h2>
+                        <input type="text" id="notesSearch" class="search-input" placeholder="Search notes...">
+                    </div>
+                    <button id="addNoteBtn" class="primary-btn"><i class="fas fa-plus"></i> Add Note</button>
+                </div>
+                <div id="notesList" class="grid-list">
+                    <!-- Notes will be rendered here by JS -->
+                    <div class="empty-state" id="emptyNotesState">
+                        <i class="fas fa-sticky-note"></i>
+                        <p>No notes yet. Click "Add Note" to get started!</p>
+                    </div>
+                </div>
+            </section>
+
+            <section class="flashcards-section">
+                <div class="section-header-inline">
+                    <h2>Flashcard Sets</h2>
+                    <button id="addFlashcardSetBtn" class="primary-btn"><i class="fas fa-plus"></i> Add Set</button>
+                </div>
+                <div id="flashcardSetsList" class="grid-list">
+                    <!-- Flashcard sets will be rendered here by JS -->
+                    <div class="empty-state" id="emptyFlashcardsState">
+                        <i class="fas fa-cards"></i>
+                        <p>No flashcard sets yet. Create one to start learning!</p>
+                    </div>
+                </div>
+            </section>
+        </main>
+
+        <footer>
+            <p>&copy; <span id="year"></span> UniMetrics</p>
+        </footer>
+    </div>
+
+    <!-- Note Modal -->
+    <div id="noteModal" class="modal">
+        <div class="modal-content">
+            <span id="noteModalClose" class="close-btn">&times;</span>
+            <h2 id="noteModalTitle">Add New Note</h2>
+            <form id="noteForm">
+                <input type="hidden" id="noteId">
+                <div class="form-group">
+                    <label for="noteTitle">Title</label>
+                    <input type="text" id="noteTitle" required placeholder="e.g., Key Concepts of Chapter 3">
+                </div>
+                <div class="form-group">
+                    <label for="noteContent">Content</label>
+                    <textarea id="noteContent" rows="10" placeholder="Write your notes here..."></textarea>
+                </div>
+                <div class="form-actions">
+                    <button type="submit" class="primary-btn">Save Note</button>
+                    <button type="button" id="deleteNoteBtn" class="icon-btn danger" style="display: none;">Delete</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Flashcard Set Modal -->
+    <div id="flashcardSetModal" class="modal">
+        <div class="modal-content">
+            <span id="flashcardSetModalClose" class="close-btn">&times;</span>
+            <h2 id="flashcardSetModalTitle">Add New Flashcard Set</h2>
+            <form id="flashcardSetForm">
+                <input type="hidden" id="flashcardSetId">
+                <div class="form-group">
+                    <label for="flashcardSetName">Set Name</label>
+                    <input type="text" id="flashcardSetName" required placeholder="e.g., Data Structures Definitions">
+                </div>
+                <div class="form-actions">
+                    <button type="submit" class="primary-btn">Save Set</button>
+                    <button type="button" id="deleteFlashcardSetBtn" class="icon-btn danger" style="display: none;">Delete Set</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Flashcard Editor Modal -->
+    <div id="flashcardEditorModal" class="modal">
+        <div class="modal-content large-modal">
+            <span id="flashcardEditorModalClose" class="close-btn">&times;</span>
+            <h2 id="flashcardEditorModalTitle">Edit Flashcards</h2>
+            <p class="subtitle" id="flashcardEditorSubtitle"></p>
+            <div id="currentFlashcards" class="flashcard-editor-list">
+                <!-- Flashcard input rows will be rendered here by JS -->
+            </div>
+            <button type="button" id="addFlashcardBtn" class="primary-btn small-btn" style="margin-top: 20px;"><i class="fas fa-plus"></i> Add Card</button>
+            <div class="form-actions" style="margin-top: 30px;">
+                <button type="button" id="saveFlashcardsBtn" class="primary-btn">Save Cards</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Flashcard Review Modal -->
+    <div id="flashcardReviewModal" class="modal">
+        <div class="modal-content large-modal">
+            <span id="flashcardReviewModalClose" class="close-btn">&times;</span>
+            <h2 id="flashcardReviewTitle">Review Flashcards</h2>
+            <p class="subtitle" id="flashcardReviewSubtitle"></p>
+
+            <div id="flashcardDisplay" class="flashcard-review-card">
+                <div class="flashcard-front">
+                    <p id="reviewCardFront"></p>
+                </div>
+                <div class="flashcard-back">
+                    <p id="reviewCardBack"></p>
+                </div>
+            </div>
+            <div class="review-controls">
+                <button type="button" id="flipCardBtn" class="secondary-btn"><i class="fas fa-sync-alt"></i> Flip Card</button>
+            </div>
+            <div id="srsControls" class="review-feedback" style="display: none;">
+                <button data-q="0" class="feedback-btn again">Again</button>
+                <button data-q="1" class="feedback-btn hard">Hard</button>
+                <button data-q="2" class="feedback-btn good">Good</button>
+                <button data-q="3" class="feedback-btn easy">Easy</button>
+            </div>
+
+            <div id="reviewCompleteMessage" class="empty-state" style="display: none;">
+                <i class="fas fa-check-circle"></i>
+                <p>You've reviewed all cards in this set!</p>
+                <button type="button" class="primary-btn" onclick="closeFlashcardReviewModal()">Done</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/main.js"></script>
+    <script>
+        document.getElementById("year").textContent = new Date().getFullYear();
+    </script>
+</body>
+</html>

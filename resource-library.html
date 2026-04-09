@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Resource Library - UniMetrics</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" integrity="sha512-9usAa10IRO0HhonpyAIVpjrylPvoDwiPUiKdWk5t3PyolY1cOd4DSE0Ga+ri4AuTroPR5aQvXU9xC6qOPnzFeg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link rel="stylesheet" href="css/base.css" />
+    <link rel="stylesheet" href="css/resource-library.css" />
+    <link rel="icon" href="assets/Logo.jpg" type="image/x-icon" />
+</head>
+<body>
+   
+
+      <div class="container">
+        <a href="index.html" class="back-link">← Back to Home</a>
+        <header>
+            <h1>Resource Library</h1>
+            <p class="subtitle">
+                Organize and access your academic resources.
+            </p>
+        </header>
+
+        <main id="resourceLibraryContainer">
+            <section class="resources-section">
+                <div class="section-header-inline">
+                    <div class="header-main">
+                        <h2>Your Resources</h2>
+                        <input type="text" id="resourceSearch" class="search-input" placeholder="Search resources...">
+                    </div>
+                    <button id="addResourceBtn" class="primary-btn"><i class="fas fa-plus"></i> Add Resource</button>
+                </div>
+                <div id="resourcesList" class="grid-list">
+                    <!-- Resources will be rendered here by JS -->
+                    <div class="empty-state" id="emptyResourcesState">
+                        <i class="fas fa-book-open"></i>
+                        <p>No resources yet. Click "Add Resource" to save useful links!</p>
+                    </div>
+                </div>
+            </section>
+        </main>
+
+        <footer>
+            <p>&copy; <span id="year"></span> UniMetrics</p>
+        </footer>
+    </div>
+
+    <!-- Resource Modal -->
+    <div id="resourceModal" class="modal">
+        <div class="modal-content">
+            <span id="resourceModalClose" class="close-btn">&times;</span>
+            <h2 id="resourceModalTitle">Add New Resource</h2>
+            <form id="resourceForm">
+                <input type="hidden" id="resourceId">
+                <div class="form-group">
+                    <label for="resourceTitle">Title</label>
+                    <input type="text" id="resourceTitle" required placeholder="e.g., Official Python Documentation">
+                </div>
+                <div class="form-group">
+                    <label for="resourceUrl">URL</label>
+                    <input type="url" id="resourceUrl" required placeholder="https://www.python.org/doc/">
+                </div>
+                <div class="form-group">
+                    <label for="resourceDescription">Description</label>
+                    <textarea id="resourceDescription" rows="5" placeholder="Brief description of the resource..."></textarea>
+                </div>
+                <div class="form-group">
+                    <label for="resourceTags">Tags (comma-separated)</label>
+                    <input type="text" id="resourceTags" placeholder="e.g., programming, python, reference">
+                </div>
+                <div class="form-actions">
+                    <button type="submit" class="primary-btn">Save Resource</button>
+                    <button type="button" id="deleteResourceBtn" class="icon-btn danger" style="display: none;">Delete</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script src="js/main.js"></script>
+    <script>
+        document.getElementById("year").textContent = new Date().getFullYear();
+    </script>
+</body>
+</html>
